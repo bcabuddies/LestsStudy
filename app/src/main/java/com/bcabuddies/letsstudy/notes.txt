@@ -1,0 +1,4 @@
+Notes:
+
+1. This app is AndroidX integrated so there will be no need to make all the gradle repo version same.
+2. This app also have ButterKnife so no need to initiate ID the lib will do that for you link- https://jakewharton.github.io/butterknife/
