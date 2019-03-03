@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Let\'s Study</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="register_here">Register Here</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="facebook_logo">facebook logo</string>
+    <string name="google_logo">google logo</string>
+    <string name="background_image">background image</string>
 </resources>
