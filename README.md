@@ -1,2 +1,2 @@
 # LestsStudy
-Simple Study app
+Simple Study android app for all
