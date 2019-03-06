@@ -4,6 +4,127 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/home_back"
     tools:context=".Registration.Registration">
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/register_name_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/edittext_bg"
+        app:layout_constraintBottom_toTopOf="@id/register_email_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/register_name_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="Name"
+            android:background="@drawable/edittext_bg"
+            android:hint="@string/name"
+            android:inputType="textEmailAddress"
+            android:padding="10dp"
+            android:textSize="20sp"
+            tools:targetApi="o" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/register_email_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/edittext_bg"
+        app:layout_constraintBottom_toTopOf="@+id/register_pass_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:transitionName="email_transition">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/register_email_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="Email"
+            android:background="@drawable/edittext_bg"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:padding="10dp"
+            android:textSize="20sp"
+            tools:targetApi="o"
+          />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/register_pass_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/edittext_bg"
+        app:layout_constraintBottom_toTopOf="@id/register_cpass_layout"
+        app:layout_constraintEnd_toEndOf="@+id/register_email_layout"
+        app:layout_constraintStart_toStartOf="@+id/register_email_layout"
+        android:transitionName="password_transition">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/register_pass_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_bg"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            android:textSize="20sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/register_cpass_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/edittext_bg"
+        app:layout_constraintBottom_toTopOf="@+id/register_registerBtn"
+        app:layout_constraintEnd_toEndOf="@+id/register_email_layout"
+        app:layout_constraintStart_toStartOf="@+id/register_email_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/register_cpass_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_bg"
+            android:hint="@string/cpassword"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            android:textSize="20sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <Button
+        android:id="@+id/register_registerBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_margin="100dp"
+        android:background="@drawable/button_bg"
+        android:fontFamily="@font/droid_sans_bold"
+        android:padding="20dp"
+        android:text="@string/register"
+        android:textColor="#000000"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"
+
+        app:layout_constraintRight_toLeftOf="parent"
+        android:transitionName="btnregister_transition"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

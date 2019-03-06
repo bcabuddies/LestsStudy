@@ -1,6 +1,10 @@
 package com.bcabuddies.letsstudy.Login;
 
+import android.app.ActivityOptions;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -8,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bcabuddies.letsstudy.R;
+import com.bcabuddies.letsstudy.Registration.Registration;
 import com.google.android.material.textfield.TextInputLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -66,7 +71,16 @@ public class Login extends AppCompatActivity {
     }
 
     private void Registration() {
-        // TODO: 04-03-2019 Registration
+       Intent sharedIntent =new Intent(Login.this,Registration.class);
+
+        Pair[] pairs=new Pair[3];
+        pairs[0]=new Pair<View,String>(loginEmailLayout,"email_transition");
+        pairs[1]=new Pair<View,String>(loginPassLayout,"password_transition");
+        pairs[2]=new Pair<View,String>(loginLoginBtn,"btnregister_transition");
+
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this,pairs);
+
+       startActivity(sharedIntent,options.toBundle());
     }
 
     private void FacebookLogin() {
