@@ -1,4 +1,4 @@
-package com.bcabuddies.letsstudy.Login;
+package com.bcabuddies.letsstudy.Login.view;
 
 import android.app.ActivityOptions;
 import android.content.Context;
@@ -41,6 +41,8 @@ public class Login extends AppCompatActivity implements LoginView {
     TextView loginRegistrationTV;
     @BindView(R.id.login_loginBtn)
     Button loginLoginBtn;
+
+    //this class will handle the layout
 
     FirebaseAuth auth;
 

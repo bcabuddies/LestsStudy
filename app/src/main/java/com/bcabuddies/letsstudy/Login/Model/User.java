@@ -3,6 +3,9 @@ package com.bcabuddies.letsstudy.Login.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+//model class to pass all the data around {getter, setter, parcel}
+//it uses Parcel taught by your "Sunit Sir"
+
 public class User implements Parcelable {
     private String email, password, username, phone;
 
@@ -16,6 +19,7 @@ public class User implements Parcelable {
         this.phone = phone;
     }
 
+    //this will get all the data
     protected User(Parcel in) {
         email = in.readString();
         password = in.readString();
@@ -72,6 +76,7 @@ public class User implements Parcelable {
         return 0;
     }
 
+    //this will pass the data
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(email);

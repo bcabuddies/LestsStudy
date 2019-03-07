@@ -1,7 +1,8 @@
-package com.bcabuddies.letsstudy.Login;
+package com.bcabuddies.letsstudy.Login.view;
 
 import com.bcabuddies.letsstudy.Login.Base.BaseView;
 
+//this interface will pass data to Layout Class i.e., Login.java
 public interface LoginView extends BaseView {
     void showValidationError(String message);
 

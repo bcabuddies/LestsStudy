@@ -2,9 +2,10 @@ package com.bcabuddies.letsstudy.Login.Presenter;
 
 import android.text.TextUtils;
 
-import com.bcabuddies.letsstudy.Login.LoginView;
+import com.bcabuddies.letsstudy.Login.view.LoginView;
 import com.google.firebase.auth.FirebaseAuth;
 
+//this class will handle and do all the work related to the data and all
 public class LoginPresenterImpl implements LoginPresenter {
 
     private FirebaseAuth auth;

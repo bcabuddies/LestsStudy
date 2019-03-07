@@ -6,6 +6,9 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 public class Utils<Data> {
+    //this class is for taking all the general use items into 1 place like Toast and Intents
+    //you can add more as you like
+
     public static Intent setIntent(Context context, Class destination) {
 
         Intent intent = new Intent(context, destination);

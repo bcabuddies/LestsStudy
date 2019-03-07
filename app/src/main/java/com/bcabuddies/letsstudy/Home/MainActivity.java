@@ -5,7 +5,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.bcabuddies.letsstudy.Login.Login;
+import com.bcabuddies.letsstudy.Login.view.Login;
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.utils.Utils;
 import com.google.firebase.auth.FirebaseAuth;
