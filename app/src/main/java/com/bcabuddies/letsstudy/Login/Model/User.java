@@ -1,40 +1,82 @@
 package com.bcabuddies.letsstudy.Login.Model;
 
-import android.text.TextUtils;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import com.google.firebase.auth.FirebaseAuth;
+public class User implements Parcelable {
+    private String email, password, username, phone;
 
-public class User implements User_interface {
-    private String email, password;
-    private FirebaseAuth firebaseAuth;
-
-    public User(String email, String password) {
-        this.email = email;
-        this.password = password;
+    public User() {
     }
 
-    @Override
+    public User(String email, String password, String username, String phone) {
+        this.email = email;
+        this.password = password;
+        this.username = username;
+        this.phone = phone;
+    }
+
+    protected User(Parcel in) {
+        email = in.readString();
+        password = in.readString();
+        username = in.readString();
+        phone = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel source) {
+            return new User(source);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
+
     public String getEmail() {
         return email;
     }
 
-    @Override
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getPassword() {
         return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     @Override
-    public boolean isValid() {
-        //check if email and password field is not empty
-        return !TextUtils.isEmpty(getEmail()) &&
-                !TextUtils.isEmpty(getPassword());
+    public int describeContents() {
+        return 0;
     }
 
-    public FirebaseAuth getFirebaseAuth() {
-        return firebaseAuth;
-    }
-
-    public void setFirebaseAuth(FirebaseAuth firebaseAuth) {
-        this.firebaseAuth = firebaseAuth;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(email);
+        dest.writeString(password);
+        dest.writeString(username);
+        dest.writeString(phone);
     }
 }

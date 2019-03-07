@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Login.Login"
-    android:background="@drawable/home_back">
+    android:background="@drawable/home_back"
+    tools:context=".Login.Login">
 
     <View
         android:id="@+id/login_background"
@@ -26,10 +26,10 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="24dp"
         android:background="@drawable/edittext_bg"
+        android:transitionName="email_transition"
         app:layout_constraintBottom_toTopOf="@+id/login_pass_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:transitionName="email_transition">
+        app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/login_email_editText"
@@ -51,10 +51,10 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:background="@drawable/edittext_bg"
+        android:transitionName="password_transition"
         app:layout_constraintBottom_toTopOf="@+id/login_loginBtn"
         app:layout_constraintEnd_toEndOf="@+id/login_email_layout"
-        app:layout_constraintStart_toStartOf="@+id/login_email_layout"
-        android:transitionName="password_transition">
+        app:layout_constraintStart_toStartOf="@+id/login_email_layout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/login_pass_editText"
@@ -90,11 +90,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
+        android:contentDescription="@string/google_logo"
         android:src="@drawable/google_logo"
         app:layout_constraintBottom_toTopOf="@+id/login_forgot_passTV"
         app:layout_constraintEnd_toEndOf="@+id/login_forgot_passTV"
-        app:layout_constraintStart_toStartOf="@+id/login_pass_layout"
-        android:contentDescription="@string/google_logo" />
+        app:layout_constraintStart_toStartOf="@+id/login_pass_layout" />
 
     <ImageView
         android:id="@+id/login_facebook_imageView"
@@ -127,19 +127,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:paddingStart="20dp"
         android:layout_marginBottom="64dp"
         android:background="@drawable/button_bg"
+        android:fontFamily="@font/droid_sans_bold"
+        android:paddingStart="20dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="10dp"
         android:text="@string/login"
         android:textColor="#000000"
-        android:fontFamily="@font/droid_sans_bold"
         android:textSize="26sp"
+        android:transitionName="btnLogin_transition"
         app:layout_constraintBottom_toTopOf="@+id/login_registrationTV"
         app:layout_constraintEnd_toEndOf="@+id/login_pass_layout"
-        app:layout_constraintStart_toStartOf="@+id/login_pass_layout"
-        android:transitionName="btnLogin_transition"/>
+        app:layout_constraintStart_toStartOf="@+id/login_pass_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
