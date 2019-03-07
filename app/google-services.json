@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "379376416536",
+    "firebase_url": "https://letsstudy-c77c3.firebaseio.com",
+    "project_id": "letsstudy-c77c3",
+    "storage_bucket": "letsstudy-c77c3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379376416536:android:cc44dfbdcf732758",
+        "android_client_info": {
+          "package_name": "com.bcabuddies.letsstudy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "379376416536-tglo1vn83vmi1kgenl4is9kr2uj26o1k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bcabuddies.letsstudy",
+            "certificate_hash": "46ee76e3b51b97a6a992e1b48e40d79a77b4dce0"
+          }
+        },
+        {
+          "client_id": "379376416536-7o8a6ikcmbldqrq3kuan4b1hdv4ueeo4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVk-vxVLC0Lz06QSPaxubBJ48CXK8hg7M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "379376416536-7o8a6ikcmbldqrq3kuan4b1hdv4ueeo4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

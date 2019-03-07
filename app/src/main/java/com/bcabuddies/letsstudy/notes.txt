@@ -5,3 +5,4 @@ Notes:
 
 3. Added some resources from the wireframe
 4. Added Font
+5. Same need to be done in forget password like login and registration

@@ -11,6 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bcabuddies.letsstudy.Login.Presenter.LoginPresenter;
+import com.bcabuddies.letsstudy.Login.Presenter.LoginView;
+import com.bcabuddies.letsstudy.Login.Presenter.Login_presenter_interface;
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.Registration.Registration;
 import com.google.android.material.textfield.TextInputLayout;
@@ -20,7 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class Login extends AppCompatActivity {
+public class Login extends AppCompatActivity implements LoginView {
 
     @BindView(R.id.login_email_layout)
     TextInputLayout loginEmailLayout;
@@ -37,11 +40,14 @@ public class Login extends AppCompatActivity {
     @BindView(R.id.login_loginBtn)
     Button loginLoginBtn;
 
+    Login_presenter_interface login_presenter_interface;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        login_presenter_interface = new LoginPresenter(this);
     }
 
     @OnClick({R.id.login_forgot_passTV, R.id.login_google_imageView, R.id.login_facebook_imageView, R.id.login_registrationTV, R.id.login_loginBtn})
@@ -67,7 +73,7 @@ public class Login extends AppCompatActivity {
 
     private void SignIn() {
         // TODO: 04-03-2019 Sign in
-        Toast.makeText(this, "Login clicked", Toast.LENGTH_LONG).show();
+        login_presenter_interface.onLogin(loginEmailLayout.getEditText().getText().toString(), loginPassLayout.getEditText().getText().toString());
     }
 
     private void Registration() {
@@ -93,5 +99,12 @@ public class Login extends AppCompatActivity {
 
     private void PasswordForgot() {
         // TODO: 04-03-2019 Password Forgot
+        loginPassLayout.setVisibility(View.INVISIBLE);
+        loginPassLayout.setEnabled(false);
+    }
+
+    @Override
+    public void onLoginResult(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
