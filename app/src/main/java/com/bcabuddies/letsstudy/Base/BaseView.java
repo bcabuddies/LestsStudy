@@ -1,4 +1,4 @@
-package com.bcabuddies.letsstudy.Login.Base;
+package com.bcabuddies.letsstudy.Base;
 
 import android.content.Context;
 

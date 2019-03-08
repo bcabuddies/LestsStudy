@@ -17,7 +17,15 @@ public class Utils<Data> {
         return intent ;
     }
 
-    public Intent setIntentExtra(Context context, Class destination, String key, Data data) {
+    public static Intent setIntentNoBackLog(Context context, Class destination) {
+        Intent intent = new Intent(context, destination);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
+
+        return intent ;
+    }
+
+    public static Intent setIntentExtra(Context context, Class destination, String key, Object data) {
         Intent intent = new Intent(context, destination);
         intent.putExtra(key, (Parcelable) data);
         context.startActivity(intent);
@@ -26,6 +34,6 @@ public class Utils<Data> {
     }
 
     public static void showMessage(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 }

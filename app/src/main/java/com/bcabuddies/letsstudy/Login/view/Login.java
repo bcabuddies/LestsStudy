@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
@@ -14,8 +15,14 @@ import com.bcabuddies.letsstudy.Home.MainActivity;
 import com.bcabuddies.letsstudy.Login.Presenter.LoginPresenter;
 import com.bcabuddies.letsstudy.Login.Presenter.LoginPresenterImpl;
 import com.bcabuddies.letsstudy.R;
-import com.bcabuddies.letsstudy.Registration.Registration;
+import com.bcabuddies.letsstudy.Registration.view.Registration;
 import com.bcabuddies.letsstudy.utils.Utils;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +49,9 @@ public class Login extends AppCompatActivity implements LoginView {
     @BindView(R.id.login_loginBtn)
     Button loginLoginBtn;
 
+    private GoogleSignInClient mGoogleSignInClient;
+    private static final int RC_SIGN_IN = 1;
+
     //this class will handle the layout
 
     FirebaseAuth auth;
@@ -67,6 +77,18 @@ public class Login extends AppCompatActivity implements LoginView {
         loginPresenter = new LoginPresenterImpl(auth);
         loginPresenter.attachView(this);
         loginPresenter.checkLogin();
+
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("379376416536-7o8a6ikcmbldqrq3kuan4b1hdv4ueeo4.apps.googleusercontent.com")
+                .requestEmail()
+                .build();
+
+
+
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
     }
 
     @OnClick({R.id.login_forgot_passTV, R.id.login_google_imageView, R.id.login_facebook_imageView, R.id.login_registrationTV, R.id.login_loginBtn})
@@ -97,6 +119,30 @@ public class Login extends AppCompatActivity implements LoginView {
         loginLoginBtn.setEnabled(false);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                loginPresenter.firebaseAuthWithGoogle(account);
+                Log.v("mGoogleSignIn", "Google sign in try");
+            } catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Log.v("mGoogleSignIn", "Google sign in failed", e);
+                // ...
+            }
+        }
+    }
+
+
+
+
     private void Registration() {
         Intent sharedIntent = new Intent(Login.this, Registration.class);
 
@@ -115,7 +161,12 @@ public class Login extends AppCompatActivity implements LoginView {
     }
 
     private void GoogleLogin() {
-        // TODO: 04-03-2019 Google Login
+        googleSignIn();
+    }
+
+    private void googleSignIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     private void PasswordForgot() {
@@ -144,7 +195,7 @@ public class Login extends AppCompatActivity implements LoginView {
     @Override
     public void isLogin(boolean isLogin) {
         if (isLogin) {
-            Utils.setIntent(this, MainActivity.class);
+            Utils.setIntentNoBackLog(this, MainActivity.class);
             finish();
         }
     }
