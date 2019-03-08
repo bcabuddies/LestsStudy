@@ -27,7 +27,7 @@ public class Utils<Data> {
 
     public static Intent setIntentExtra(Context context, Class destination, String key, Object data) {
         Intent intent = new Intent(context, destination);
-        intent.putExtra(key, (Parcelable) data);
+        intent.putExtra(key, (Integer) data);
         context.startActivity(intent);
 
         return intent ;

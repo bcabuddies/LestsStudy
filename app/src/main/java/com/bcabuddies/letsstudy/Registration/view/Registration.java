@@ -2,6 +2,7 @@ package com.bcabuddies.letsstudy.Registration.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 
 import com.bcabuddies.letsstudy.Home.MainActivity;
@@ -61,6 +62,7 @@ public class Registration extends AppCompatActivity implements RegisterView {
     @Override
     public void signUpSuccess() {
         Utils.showMessage(this, "Welcome");
+        Log.e("regname", "signUpSuccess: "+registerNameLayout.getEditText().getText().length() );
         Utils.setIntentExtra(this, PostRegistration.class, "name", registerNameLayout.getEditText().getText().length());
     }
 
