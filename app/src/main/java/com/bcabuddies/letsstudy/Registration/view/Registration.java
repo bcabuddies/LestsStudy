@@ -45,6 +45,14 @@ public class Registration extends AppCompatActivity implements RegisterView {
         presenter.attachView(this);
     }
 
+    @OnClick(R.id.register_registerBtn)
+    public void onViewClicked() {
+        presenter.signUp(
+                registerEmailLayout.getEditText().getText().toString().trim().toLowerCase(),
+                registerPassLayout.getEditText().getText().toString(),
+                registerCpassLayout.getEditText().getText().toString());
+    }
+
     @Override
     public void showValidationError() {
         Utils.showMessage(this,"Please fill the details carefully");
@@ -53,8 +61,7 @@ public class Registration extends AppCompatActivity implements RegisterView {
     @Override
     public void signUpSuccess() {
         Utils.showMessage(this, "Welcome");
-        Utils.setIntent(this, MainActivity.class);
-        finish();
+        Utils.setIntentExtra(this, PostRegistration.class, "name", registerNameLayout.getEditText().getText().length());
     }
 
     @Override
@@ -65,13 +72,5 @@ public class Registration extends AppCompatActivity implements RegisterView {
     @Override
     public Context getContext() {
         return null;
-    }
-
-    @OnClick(R.id.register_registerBtn)
-    public void onViewClicked() {
-        presenter.signUp(
-                registerEmailLayout.getEditText().getText().toString().trim().toLowerCase(),
-                registerPassLayout.getEditText().getText().toString(),
-                registerCpassLayout.getEditText().getText().toString());
     }
 }

@@ -144,7 +144,7 @@ public class Login extends AppCompatActivity implements LoginView {
     @Override
     public void isLogin(boolean isLogin) {
         if (isLogin) {
-            Utils.setIntent(this, MainActivity.class);
+            Utils.setIntentNoBackLog(this, MainActivity.class);
             finish();
         }
     }
