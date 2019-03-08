@@ -12,5 +12,10 @@
     <string name="google_logo">google logo</string>
     <string name="background_image">background image</string>
     <string name="submit">Submit</string>
+
+    <string name="facebook_app_id">2319601628252813</string>
+    <string name="fb_login_protocol_scheme">fb2319601628252813</string>
+
+
     <string name="age">Age</string>
 </resources>

@@ -111,6 +111,24 @@
         app:layout_constraintStart_toStartOf="@+id/login_forgot_passTV"
         app:layout_constraintTop_toTopOf="@+id/login_google_imageView" />
 
+  <!--  <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_facebook_imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/facebook_logo"
+        android:layout_gravity="center_horizontal"
+
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+
+        app:layout_constraintTop_toBottomOf="@id/login_google_imageView"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/login_forgot_passTV"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        />-->
+
     <TextView
         android:id="@+id/login_registrationTV"
         android:layout_width="wrap_content"

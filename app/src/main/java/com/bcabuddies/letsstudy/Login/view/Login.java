@@ -17,6 +17,12 @@ import com.bcabuddies.letsstudy.Login.Presenter.LoginPresenterImpl;
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.Registration.view.Registration;
 import com.bcabuddies.letsstudy.utils.Utils;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -25,7 +31,13 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
@@ -48,6 +60,10 @@ public class Login extends AppCompatActivity implements LoginView {
     TextView loginRegistrationTV;
     @BindView(R.id.login_loginBtn)
     Button loginLoginBtn;
+
+                    // LoginButton loginFacebookImageView;
+
+    private CallbackManager mCallbackManager;
 
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 1;
@@ -85,6 +101,29 @@ public class Login extends AppCompatActivity implements LoginView {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
+
+
+        // Initialize Facebook Login button
+        mCallbackManager = CallbackManager.Factory.create();
+
+
+
+
+
+
+
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser!=null){
+            isLogin(true);
+        }
+
     }
 
     @OnClick({R.id.login_forgot_passTV, R.id.login_google_imageView, R.id.login_facebook_imageView, R.id.login_registrationTV, R.id.login_loginBtn})
@@ -106,6 +145,32 @@ public class Login extends AppCompatActivity implements LoginView {
                 SignIn();
                 break;
         }
+    }
+
+    private void FacebookLogin() {
+
+
+
+        LoginManager.getInstance().logInWithReadPermissions(Login.this, Arrays.asList("email", "public_profile"));
+        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d("facebooktest", "facebook:onSuccess:" + loginResult);
+                loginPresenter.handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d("facebooktest", "facebook:onCancel");
+                // ...
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.d("facebooktest", "facebook:onError", error);
+                // ...
+            }
+        });
     }
 
     private void SignIn() {
@@ -134,6 +199,9 @@ public class Login extends AppCompatActivity implements LoginView {
                 // ...
             }
         }
+        else{
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void Registration() {
@@ -149,10 +217,10 @@ public class Login extends AppCompatActivity implements LoginView {
         startActivity(sharedIntent, options.toBundle());
     }
 
-    private void FacebookLogin() {
+ /*   private void FacebookLogin() {
         // TODO: 04-03-2019 Facebook Login
     }
-
+*/
     private void GoogleLogin() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.bcabuddies.letsstudy.Login.view.Login;
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.utils.Utils;
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,8 +47,16 @@ public class MainActivity extends AppCompatActivity {
     public void onViewClicked() {
         //sign out
         auth.signOut();
+        try{
+            LoginManager.getInstance().logOut();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
         Utils.showMessage(this, "Sign out");
         Utils.setIntent(this, Login.class);
+
         finish();
     }
 }
