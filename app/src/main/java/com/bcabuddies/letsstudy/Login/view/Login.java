@@ -83,10 +83,6 @@ public class Login extends AppCompatActivity implements LoginView {
                 .requestIdToken("379376416536-7o8a6ikcmbldqrq3kuan4b1hdv4ueeo4.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
-
-
-
-
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
     }
@@ -140,9 +136,6 @@ public class Login extends AppCompatActivity implements LoginView {
         }
     }
 
-
-
-
     private void Registration() {
         Intent sharedIntent = new Intent(Login.this, Registration.class);
 
@@ -161,10 +154,6 @@ public class Login extends AppCompatActivity implements LoginView {
     }
 
     private void GoogleLogin() {
-        googleSignIn();
-    }
-
-    private void googleSignIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }

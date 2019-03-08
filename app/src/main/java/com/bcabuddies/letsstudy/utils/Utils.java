@@ -3,6 +3,7 @@ package com.bcabuddies.letsstudy.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
+import android.util.Log;
 import android.widget.Toast;
 
 public class Utils<Data> {

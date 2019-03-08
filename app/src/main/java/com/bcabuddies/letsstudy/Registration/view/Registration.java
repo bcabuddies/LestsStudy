@@ -20,8 +20,6 @@ import butterknife.OnClick;
 
 public class Registration extends AppCompatActivity implements RegisterView {
 
-    @BindView(R.id.register_name_layout)
-    TextInputLayout registerNameLayout;
     @BindView(R.id.register_email_layout)
     TextInputLayout registerEmailLayout;
     @BindView(R.id.register_pass_layout)
@@ -62,8 +60,7 @@ public class Registration extends AppCompatActivity implements RegisterView {
     @Override
     public void signUpSuccess() {
         Utils.showMessage(this, "Welcome");
-        Log.e("regname", "signUpSuccess: "+registerNameLayout.getEditText().getText().length() );
-        Utils.setIntentExtra(this, PostRegistration.class, "name", registerNameLayout.getEditText().getText().length());
+        Utils.setIntent(this, PostRegistration.class);
     }
 
     @Override

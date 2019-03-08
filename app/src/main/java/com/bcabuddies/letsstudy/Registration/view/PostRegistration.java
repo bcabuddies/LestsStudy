@@ -30,16 +30,12 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     private FirebaseAuth auth;
     private FirebaseFirestore firebaseFirestore;
     private PostRegistrationPresenterImpl presenter;
-    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_registration);
         ButterKnife.bind(this);
-
-        name = getIntent().getStringExtra("name");
-        postRegNameLayout.getEditText().setText(name);
 
         FirebaseApp.initializeApp(this);
         auth = FirebaseAuth.getInstance();

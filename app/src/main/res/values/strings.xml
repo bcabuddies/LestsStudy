@@ -12,4 +12,5 @@
     <string name="google_logo">google logo</string>
     <string name="background_image">background image</string>
     <string name="submit">Submit</string>
+    <string name="age">Age</string>
 </resources>
