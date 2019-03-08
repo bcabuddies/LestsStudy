@@ -4,7 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import com.bcabuddies.letsstudy.R;
+import com.bcabuddies.letsstudy.Registration.view.PostRegistration;
+
+import androidx.appcompat.widget.PopupMenu;
 
 public class Utils<Data> {
     //this class is for taking all the general use items into 1 place like Toast and Intents

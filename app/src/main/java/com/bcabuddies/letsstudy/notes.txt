@@ -7,4 +7,10 @@ Notes:
 4. Added Font
 5. Same need to be done in forget password like login and registration
 
-6. Added firebase Login with MVP architecture
+6. Done firebase Login with MVP architecture
+7. Done google and facebook sign up in Login
+8. Created Layout of PreRegistration.java
+9. Working on creating Custom Pop Up menu for PreRegistration.java
+
+10.Need to retrieve menu items from the database so we can add more items from server
+12.Need to update Home/MainActivity.java to show the user data on the front page just for testing

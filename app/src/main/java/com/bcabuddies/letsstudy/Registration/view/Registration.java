@@ -2,10 +2,8 @@ package com.bcabuddies.letsstudy.Registration.view;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 
-import com.bcabuddies.letsstudy.Home.MainActivity;
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.Registration.Presenter.RegisterPresenterImpl;
 import com.bcabuddies.letsstudy.utils.Utils;
@@ -35,7 +33,7 @@ public class Registration extends AppCompatActivity implements RegisterView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_registration);
+        setContentView(R.layout.activity_registration);
         ButterKnife.bind(this);
 
         FirebaseApp.initializeApp(this);
@@ -54,7 +52,7 @@ public class Registration extends AppCompatActivity implements RegisterView {
 
     @Override
     public void showValidationError() {
-        Utils.showMessage(this,"Please fill the details carefully");
+        Utils.showMessage(this, "Please fill the details carefully");
     }
 
     @Override
@@ -65,7 +63,7 @@ public class Registration extends AppCompatActivity implements RegisterView {
 
     @Override
     public void signUpError(String message) {
-        Utils.showMessage(this, "sign up error : "+message);
+        Utils.showMessage(this, "sign up error : " + message);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.bcabuddies.letsstudy.Home;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -18,7 +17,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
-
 
     @BindView(R.id.emailTV)
     TextView emailTV;
@@ -47,10 +45,9 @@ public class MainActivity extends AppCompatActivity {
     public void onViewClicked() {
         //sign out
         auth.signOut();
-        try{
+        try {
             LoginManager.getInstance().logOut();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

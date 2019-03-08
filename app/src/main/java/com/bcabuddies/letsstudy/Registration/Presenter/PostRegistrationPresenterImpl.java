@@ -45,6 +45,11 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter{
     }
 
     @Override
+    public void getMenu(String menu) {
+
+    }
+
+    @Override
     public void attachView(PostRegistrationView view) {
         postRegView = view;
     }
