@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "379376416536-tglo1vn83vmi1kgenl4is9kr2uj26o1k.apps.googleusercontent.com",
+          "client_id": "379376416536-enr59o21e33ucs66tdr7fc9vsoaajpjq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.bcabuddies.letsstudy",
-            "certificate_hash": "46ee76e3b51b97a6a992e1b48e40d79a77b4dce0"
+            "certificate_hash": "211dc699e9bcfb990fad9ad08087592bc6e0d43f"
           }
         },
         {
@@ -29,7 +29,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDVk-vxVLC0Lz06QSPaxubBJ48CXK8hg7M"
+          "current_key": "AIzaSyAvDWQdVt5NPcVRWWXRqtSyoLmqfgkaLt4"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "379376416536-7o8a6ikcmbldqrq3kuan4b1hdv4ueeo4.apps.googleusercontent.com",
+              "client_id": "379376416536-knbnpiiios0gp6mrgk85igp7oacm61g5.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
