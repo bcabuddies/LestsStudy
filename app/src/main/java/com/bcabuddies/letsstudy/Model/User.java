@@ -1,4 +1,4 @@
-package com.bcabuddies.letsstudy.Login.Model;
+package com.bcabuddies.letsstudy.Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

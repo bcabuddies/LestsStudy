@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/home_back"
-    tools:context=".Registration.Registration">
+    tools:context=".Registration.view.Registration">
 
 
     <com.google.android.material.textfield.TextInputLayout
@@ -27,7 +27,7 @@
             android:autofillHints="Name"
             android:background="@drawable/edittext_bg"
             android:hint="@string/name"
-            android:inputType="textEmailAddress"
+            android:inputType="textPersonName"
             android:padding="10dp"
             android:textSize="20sp"
             tools:targetApi="o" />

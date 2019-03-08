@@ -14,7 +14,7 @@ import com.bcabuddies.letsstudy.Home.MainActivity;
 import com.bcabuddies.letsstudy.Login.Presenter.LoginPresenter;
 import com.bcabuddies.letsstudy.Login.Presenter.LoginPresenterImpl;
 import com.bcabuddies.letsstudy.R;
-import com.bcabuddies.letsstudy.Registration.Registration;
+import com.bcabuddies.letsstudy.Registration.view.Registration;
 import com.bcabuddies.letsstudy.utils.Utils;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
