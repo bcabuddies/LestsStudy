@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.bcabuddies.letsstudy.Login.view.Login;
 import com.bcabuddies.letsstudy.Login.view.LoginView;
 import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -53,6 +54,8 @@ public class LoginPresenterImpl implements LoginPresenter {
         }
     }
 
+
+    //google signIn
     public void firebaseAuthWithGoogle(GoogleSignInAccount account) {
 
         Log.v("mGoogleSignIn", "firebaseAuthWithGoogle: " + account.getId());
@@ -76,6 +79,8 @@ public class LoginPresenterImpl implements LoginPresenter {
 
     }
 
+
+    //facebook signIn
     public void handleFacebookAccessToken(AccessToken token) {
         Log.v("facebooktest", "handleFacebookAccessToken:" + token);
 
@@ -86,14 +91,13 @@ public class LoginPresenterImpl implements LoginPresenter {
                 if (!task.isSuccessful()) {
                     try {
                         Log.e("facebooktest", "error: "+task.getException().getMessage()  );
-
+                        LoginManager.getInstance().logOut();
                         loginView.loginError(task.getException().getMessage());
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.e("facebooktest", "onComplete: "+e.getMessage() );
                     }
                 } else {
-                    FirebaseUser currentUser = task.getResult().getUser();
                     loginView.loginSuccess();
                     Log.e("facebooktest", "onComplete: success " );
                 }

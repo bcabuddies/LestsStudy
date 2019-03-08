@@ -228,8 +228,7 @@ public class Login extends AppCompatActivity implements LoginView {
 
     private void PasswordForgot() {
         // TODO: 04-03-2019 Password Forgot
-        loginPassLayout.setVisibility(View.INVISIBLE);
-        loginPassLayout.setEnabled(false);
+
     }
 
     @Override
