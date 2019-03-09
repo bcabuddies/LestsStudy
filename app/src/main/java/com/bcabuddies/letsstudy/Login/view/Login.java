@@ -15,14 +15,18 @@ import com.bcabuddies.letsstudy.Home.MainActivity;
 import com.bcabuddies.letsstudy.Login.Presenter.LoginPresenter;
 import com.bcabuddies.letsstudy.Login.Presenter.LoginPresenterImpl;
 import com.bcabuddies.letsstudy.R;
+import com.bcabuddies.letsstudy.Registration.view.PostRegistration;
 import com.bcabuddies.letsstudy.Registration.view.Registration;
 import com.bcabuddies.letsstudy.utils.Utils;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -31,12 +35,12 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.lang.reflect.Array;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Arrays;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -61,10 +65,8 @@ public class Login extends AppCompatActivity implements LoginView {
     @BindView(R.id.login_loginBtn)
     Button loginLoginBtn;
 
-                    // LoginButton loginFacebookImageView;
-
+    String fNname, profUrl;
     private CallbackManager mCallbackManager;
-
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 1;
 
@@ -102,14 +104,8 @@ public class Login extends AppCompatActivity implements LoginView {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
 
-
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
-
-
-
-
-
 
 
     }
@@ -120,7 +116,7 @@ public class Login extends AppCompatActivity implements LoginView {
         super.onStart();
 
         FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser!=null){
+        if (currentUser != null) {
             isLogin(true);
         }
 
@@ -148,23 +144,37 @@ public class Login extends AppCompatActivity implements LoginView {
     }
 
     private void FacebookLogin() {
-
-
-
         LoginManager.getInstance().logInWithReadPermissions(Login.this, Arrays.asList("email", "public_profile"));
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d("facebooktest", "facebook:onSuccess:" + loginResult);
                 loginPresenter.handleFacebookAccessToken(loginResult.getAccessToken());
-            }
+                AccessToken accessToken = loginResult.getAccessToken();
+                Profile profile = Profile.getCurrentProfile();
 
+                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        Log.e("facebookRet", "Login Activity response: " + response.toString());
+                        try {
+                            String id = object.getString("id");
+                            fNname = object.getString("name");
+                            profUrl = "http://graph.facebook.com/" + id + "/picture?type=large";
+                            Log.e("facebookRet", "name: " + fNname);
+                            Log.e("facebookRet", "\n prof: " + profUrl);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                request.executeAsync();
+            }
             @Override
             public void onCancel() {
                 Log.d("facebooktest", "facebook:onCancel");
                 // ...
             }
-
             @Override
             public void onError(FacebookException error) {
                 Log.d("facebooktest", "facebook:onError", error);
@@ -186,41 +196,38 @@ public class Login extends AppCompatActivity implements LoginView {
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 loginPresenter.firebaseAuthWithGoogle(account);
+                fNname = account.getDisplayName();
+                profUrl = account.getPhotoUrl().toString();
+                Log.e("googleRet", "name: " + fNname);
+                Log.e("googleRet", "pofile: " + profUrl);
                 Log.v("mGoogleSignIn", "Google sign in try");
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.v("mGoogleSignIn", "Google sign in failed", e);
                 // ...
             }
-        }
-        else{
+        } else {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
+
     private void Registration() {
         Intent sharedIntent = new Intent(Login.this, Registration.class);
-
         Pair[] pairs = new Pair[3];
         pairs[0] = new Pair<View, String>(loginEmailLayout, "email_transition");
         pairs[1] = new Pair<View, String>(loginPassLayout, "password_transition");
         pairs[2] = new Pair<View, String>(loginLoginBtn, "btnregister_transition");
-
         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, pairs);
-
         startActivity(sharedIntent, options.toBundle());
     }
 
- /*   private void FacebookLogin() {
-        // TODO: 04-03-2019 Facebook Login
-    }
-*/
+
     private void GoogleLogin() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -242,6 +249,13 @@ public class Login extends AppCompatActivity implements LoginView {
         loginLoginBtn.setEnabled(true);
         Utils.setIntent(this, MainActivity.class);
     }
+
+    @Override
+    public void thirdPartyLoginSuccess() {
+        Utils.showMessage(this, "Login Success!");
+        Utils.setIntent(this, PostRegistration.class);
+    }
+
 
     @Override
     public void loginError(String error) {

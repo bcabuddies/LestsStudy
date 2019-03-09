@@ -2,24 +2,18 @@ package com.bcabuddies.letsstudy.Login.Presenter;
 
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.bcabuddies.letsstudy.Login.view.Login;
 import com.bcabuddies.letsstudy.Login.view.LoginView;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-
-import java.util.concurrent.ExecutionException;
 
 import androidx.annotation.NonNull;
 
@@ -71,7 +65,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                         e.printStackTrace();
                     }
                 } else {
-                    loginView.loginSuccess();
+                    loginView.thirdPartyLoginSuccess();
                 }
             }
         });
@@ -90,16 +84,16 @@ public class LoginPresenterImpl implements LoginPresenter {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (!task.isSuccessful()) {
                     try {
-                        Log.e("facebooktest", "error: "+task.getException().getMessage()  );
+                        Log.e("facebooktest", "error: " + task.getException().getMessage());
                         LoginManager.getInstance().logOut();
                         loginView.loginError(task.getException().getMessage());
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.e("facebooktest", "onComplete: "+e.getMessage() );
+                        Log.e("facebooktest", "onComplete: " + e.getMessage());
                     }
                 } else {
-                    loginView.loginSuccess();
-                    Log.e("facebooktest", "onComplete: success " );
+                    loginView.thirdPartyLoginSuccess();
+                    Log.e("facebooktest", "onComplete: success ");
                 }
             }
         });

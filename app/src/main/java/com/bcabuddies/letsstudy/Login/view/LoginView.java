@@ -8,6 +8,8 @@ public interface LoginView extends BaseView {
 
     void loginSuccess();
 
+    void thirdPartyLoginSuccess();
+
     void loginError(String error);
 
     void isLogin(boolean isLogin);
