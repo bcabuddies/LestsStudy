@@ -23,7 +23,6 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -39,7 +38,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -69,6 +67,7 @@ public class Login extends AppCompatActivity implements LoginView {
     private CallbackManager mCallbackManager;
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 1;
+    private static final String TAG = "Login.java";
 
     //this class will handle the layout
 
@@ -153,28 +152,27 @@ public class Login extends AppCompatActivity implements LoginView {
                 AccessToken accessToken = loginResult.getAccessToken();
                 Profile profile = Profile.getCurrentProfile();
 
-                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(JSONObject object, GraphResponse response) {
-                        Log.e("facebookRet", "Login Activity response: " + response.toString());
-                        try {
-                            String id = object.getString("id");
-                            fNname = object.getString("name");
-                            profUrl = "http://graph.facebook.com/" + id + "/picture?type=large";
-                            Log.e("facebookRet", "name: " + fNname);
-                            Log.e("facebookRet", "\n prof: " + profUrl);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), (object, response) -> {
+                    Log.e("facebookRet", "Login Activity response: " + response.toString());
+                    try {
+                        String id = object.getString("id");
+                        fNname = object.getString("name");
+                        profUrl = "http://graph.facebook.com/" + id + "/picture?type=large";
+                        Log.e("facebookRet", "name: " + fNname);
+                        Log.e("facebookRet", "\n prof: " + profUrl);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 });
                 request.executeAsync();
             }
+
             @Override
             public void onCancel() {
                 Log.d("facebooktest", "facebook:onCancel");
                 // ...
             }
+
             @Override
             public void onError(FacebookException error) {
                 Log.d("facebooktest", "facebook:onError", error);
@@ -235,7 +233,6 @@ public class Login extends AppCompatActivity implements LoginView {
 
     private void PasswordForgot() {
         // TODO: 04-03-2019 Password Forgot
-
     }
 
     @Override
@@ -253,7 +250,11 @@ public class Login extends AppCompatActivity implements LoginView {
     @Override
     public void thirdPartyLoginSuccess() {
         Utils.showMessage(this, "Login Success!");
-        Utils.setIntent(this, PostRegistration.class);
+        Bundle data = new Bundle();
+        Log.e(TAG, "thirdPartyLoginSuccess: name and profile " + fNname + " " + profUrl);
+        data.putString("name", fNname);
+        data.putString("profile", profUrl);
+        Utils.setIntentExtra(this, PostRegistration.class, "data", data);
     }
 
 

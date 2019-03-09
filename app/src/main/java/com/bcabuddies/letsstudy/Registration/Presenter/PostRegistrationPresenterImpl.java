@@ -1,6 +1,7 @@
 package com.bcabuddies.letsstudy.Registration.Presenter;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.bcabuddies.letsstudy.Registration.view.PostRegistrationView;
 import com.google.firebase.auth.FirebaseUser;
@@ -9,7 +10,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PostRegistrationPresenterImpl implements PostRegistrationPresenter{
+import static androidx.constraintlayout.widget.Constraints.TAG;
+
+public class PostRegistrationPresenterImpl implements PostRegistrationPresenter {
 
     private PostRegistrationView postRegView;
     private FirebaseFirestore db;
@@ -22,31 +25,44 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter{
 
     @Override
     public void uploadData(String name) {
-        if (TextUtils.isEmpty(name)){
+        if (TextUtils.isEmpty(name)) {
             postRegView.showValidationError();
         } else {
             String uid = user.getUid();
             Map<String, Object> data = new HashMap<>();
 
-            data.put("name",name);
+            data.put("name", name);
 
             db.collection("Users").document(uid).set(data).addOnCompleteListener(task -> {
-               if (task.isSuccessful()){
-                   postRegView.detailUploadSuccess();
-               } else {
-                   try {
-                       postRegView.detailsUploadError(task.getException().getMessage());
-                   } catch (Exception e) {
-                       e.printStackTrace();
-                   }
-               }
+                if (task.isSuccessful()) {
+                    postRegView.detailUploadSuccess();
+                } else {
+                    try {
+                        postRegView.detailsUploadError(task.getException().getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             });
         }
     }
 
     @Override
-    public void getMenu(String menu) {
-
+    public void getMenu() {
+        Log.e(TAG, "getMenu: get menu started ");
+        db.collection("PreData").document("Education").get().addOnCompleteListener(task -> {
+            if (task.getResult().exists()) {
+                Log.e(TAG, "getMenu: data found ");
+                String menu_item = task.getResult().getString("menu");
+                Log.e(TAG, "getMenu: data " + menu_item);
+                String[] parts = menu_item.split(", ");
+                Log.e(TAG, "getMenu: " + parts);
+                postRegView.pursuingMenu(parts);
+            } else {
+                //no data
+                Log.e(TAG, "getMenu: no data ");
+            }
+        });
     }
 
     @Override

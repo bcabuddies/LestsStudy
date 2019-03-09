@@ -2,10 +2,10 @@ package com.bcabuddies.letsstudy.Registration.view;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bcabuddies.letsstudy.Home.MainActivity;
@@ -17,8 +17,6 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
@@ -37,25 +35,31 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     CircleImageView postRegProfileView;
     @BindView(R.id.post_reg_ageLayout)
     TextInputLayout postRegAgeLayout;
-    @BindView(R.id.post_reg_qualification)
-    EditText postRegQualification;
-    @BindView(R.id.post_reg_inQualification)
-    EditText postRegInQualification;
-    @BindView(R.id.post_reg_pursuing)
-    EditText postRegPursuing;
     @BindView(R.id.post_reg_inPursuing)
-    EditText postRegInPursuing;
+    TextView postRegInPursuing;
+
     private FirebaseUser user;
     private FirebaseAuth auth;
     private FirebaseFirestore firebaseFirestore;
     private PostRegistrationPresenterImpl presenter;
     private PopupMenu popup;
+    private Bundle b;
+    private final static String TAG = "PostRegistration.java";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_registration);
         ButterKnife.bind(this);
+
+        try {
+            b = this.getIntent().getBundleExtra("data");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "onCreate: " + b.getString("name") + b.getString("profile"));
+        }
+
+        menuInitiated();
 
         FirebaseApp.initializeApp(this);
         auth = FirebaseAuth.getInstance();
@@ -65,9 +69,13 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         presenter.attachView(this);
     }
 
-    @OnClick(R.id.button)
-    public void onViewClicked() {
-        presenter.uploadData(postRegNameLayout.getEditText().getText().toString());
+    private void menuInitiated() {
+        Log.e(TAG, "menuInitiated: menu init ");
+        //Creating the instance of PopupMenu
+        popup = new PopupMenu(PostRegistration.this, postRegInPursuing);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater()
+                .inflate(R.menu.empty_menu, popup.getMenu());
     }
 
     @Override
@@ -88,15 +96,13 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     }
 
     @Override
-    public void qualiMenu(ArrayList<String> list) {
+    public void pursuingMenu(String[] list) {
         //pass data to menu items
-        popup.getMenu().add(list.get(0));
-    }
-
-    @Override
-    public void pursuingMenu(ArrayList<String> list) {
-        //pass data to menu items
-        popup.getMenu().add(list.get(0));
+        Log.e(TAG, "pursuingMenu: menu data received " + list);
+        for (String s : list) {
+            popup.getMenu().add(s);
+            Log.e(TAG, "pursuingMenu: s " + s);
+        }
     }
 
     @Override
@@ -104,7 +110,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         return null;
     }
 
-    @OnClick({R.id.post_reg_profileView, R.id.post_reg_ageLayout, R.id.post_reg_qualification, R.id.post_reg_inQualification, R.id.post_reg_pursuing, R.id.post_reg_inPursuing})
+    @OnClick({R.id.post_reg_profileView, R.id.post_reg_ageLayout})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.post_reg_profileView:
@@ -113,34 +119,23 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
             case R.id.post_reg_ageLayout:
                 ageUpdate();
                 break;
-            case R.id.post_reg_qualification:
-                qualificationUpdate();
-                break;
-            case R.id.post_reg_inQualification:
-                detailQualification();
-                break;
-            case R.id.post_reg_pursuing:
-                pursuingUpdate();
-                break;
-            case R.id.post_reg_inPursuing:
-                detailPursuingUpdate();
-                break;
         }
     }
 
-    private void detailPursuingUpdate() {
+    @OnClick(R.id.button)
+    public void onButtonClicked() {
+        presenter.uploadData(postRegNameLayout.getEditText().getText().toString());
+    }
 
+    @OnClick(R.id.post_reg_inPursuing)
+    public void onPostRegInPursuingClicked() {
+        Log.e(TAG, "onPostRegInPursuingClicked: menu clicked ");
+        presenter.getMenu();
+        pursuingUpdate();
     }
 
     private void pursuingUpdate() {
-        presenter.getMenu("pursuing");
-        //for qualification
-        //Creating the instance of PopupMenu
-        popup = new PopupMenu(PostRegistration.this, postRegInQualification);
-        //Inflating the Popup using xml file
-        popup.getMenuInflater()
-                .inflate(R.menu.empty_menu, popup.getMenu());
-
+        Log.e(TAG, "pursuingUpdate: " + "pursuing clicked");
         //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(item -> {
             Toast.makeText(
@@ -148,43 +143,17 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
                     "You Selected : " + item.getTitle(),
                     Toast.LENGTH_SHORT
             ).show();
-            postRegQualification.setText(item.getTitle());
-            return true;
-        });
-        popup.show(); //showing popup menu
-    }
-
-    private void detailQualification() {
-
-    }
-
-    private void qualificationUpdate() {
-        presenter.getMenu("qualification");
-        //for qualification
-        //Creating the instance of PopupMenu
-        popup = new PopupMenu(PostRegistration.this, postRegInQualification);
-        //Inflating the Popup using xml file
-        popup.getMenuInflater()
-                .inflate(R.menu.empty_menu, popup.getMenu());
-
-        //registering popup with OnMenuItemClickListener
-        popup.setOnMenuItemClickListener(item -> {
-            Toast.makeText(
-                    PostRegistration.this,
-                    "You Selected : " + item.getTitle(),
-                    Toast.LENGTH_SHORT
-            ).show();
-            postRegQualification.setText(item.getTitle());
+            postRegInPursuing.setText(item.getTitle());
             return true;
         });
         popup.show(); //showing popup menu
     }
 
     private void ageUpdate() {
-
+        //need to add Calender to select age
     }
 
     private void profileUpdate() {
-
+        //need to create option to select or click image
     }
 }

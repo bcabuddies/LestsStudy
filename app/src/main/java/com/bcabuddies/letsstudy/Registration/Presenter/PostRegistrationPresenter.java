@@ -5,5 +5,6 @@ import com.bcabuddies.letsstudy.Registration.view.PostRegistrationView;
 
 public interface PostRegistrationPresenter extends BasePresenter<PostRegistrationView> {
     void uploadData(String name);
-    void getMenu(String menu);
+
+    void getMenu();
 }

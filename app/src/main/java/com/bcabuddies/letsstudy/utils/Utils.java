@@ -2,6 +2,7 @@ package com.bcabuddies.letsstudy.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.widget.EditText;
@@ -9,6 +10,9 @@ import android.widget.Toast;
 
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.Registration.view.PostRegistration;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import androidx.appcompat.widget.PopupMenu;
 
@@ -32,9 +36,9 @@ public class Utils<Data> {
         return intent ;
     }
 
-    public static Intent setIntentExtra(Context context, Class destination, String key, Object data) {
+    public static Intent setIntentExtra(Context context, Class destination, String key, Bundle data) {
         Intent intent = new Intent(context, destination);
-        intent.putExtra(key, (Integer) data);
+        intent.putExtra(key, data);
         context.startActivity(intent);
 
         return intent ;
