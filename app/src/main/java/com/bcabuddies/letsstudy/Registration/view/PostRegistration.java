@@ -12,6 +12,7 @@ import com.bcabuddies.letsstudy.Home.MainActivity;
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.Registration.Presenter.PostRegistrationPresenterImpl;
 import com.bcabuddies.letsstudy.utils.Utils;
+import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -60,6 +61,9 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         }
 
         menuInitiated();
+        String name = b.getString("name");
+        String profile = b.getString("profile");
+        preData(name, profile);
 
         FirebaseApp.initializeApp(this);
         auth = FirebaseAuth.getInstance();
@@ -67,6 +71,13 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         firebaseFirestore = FirebaseFirestore.getInstance();
         presenter = new PostRegistrationPresenterImpl(firebaseFirestore, user);
         presenter.attachView(this);
+        presenter.getMenu();
+    }
+
+    private void preData(String name, String profile) {
+        postRegNameLayout.getEditText().setText(name);
+        Glide.with(this).load(profile)
+                .into(postRegProfileView);
     }
 
     private void menuInitiated() {
@@ -76,6 +87,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         //Inflating the Popup using xml file
         popup.getMenuInflater()
                 .inflate(R.menu.empty_menu, popup.getMenu());
+        pursuingUpdate();
     }
 
     @Override
@@ -130,8 +142,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     @OnClick(R.id.post_reg_inPursuing)
     public void onPostRegInPursuingClicked() {
         Log.e(TAG, "onPostRegInPursuingClicked: menu clicked ");
-        presenter.getMenu();
-        pursuingUpdate();
+        popup.show(); //showing popup menu
     }
 
     private void pursuingUpdate() {
@@ -146,7 +157,6 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
             postRegInPursuing.setText(item.getTitle());
             return true;
         });
-        popup.show(); //showing popup menu
     }
 
     private void ageUpdate() {
