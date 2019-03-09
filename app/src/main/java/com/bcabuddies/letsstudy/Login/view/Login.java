@@ -65,7 +65,7 @@ public class Login extends AppCompatActivity implements LoginView {
     @BindView(R.id.login_loginBtn)
     Button loginLoginBtn;
 
-    String fNname, profUrl;
+    /*---- */ String fNname, profUrl; /*--- send this data to postRegistraion ---*/
     private CallbackManager mCallbackManager;
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 1;
