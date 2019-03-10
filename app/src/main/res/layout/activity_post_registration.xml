@@ -64,9 +64,11 @@
         app:layout_constraintTop_toBottomOf="@+id/post_reg_nameLayout">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/post_reg_ageET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edittext_bg"
+            android:focusable="false"
             android:hint="@string/age"
             android:padding="10dp"
             android:textSize="20sp" />

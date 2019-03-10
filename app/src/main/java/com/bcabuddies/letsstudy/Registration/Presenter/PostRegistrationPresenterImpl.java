@@ -24,7 +24,7 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
     }
 
     @Override
-    public void uploadData(String name) {
+    public void uploadData(String name, String age, String profileUri, String pursuing) {
         if (TextUtils.isEmpty(name)) {
             postRegView.showValidationError();
         } else {
@@ -32,6 +32,12 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
             Map<String, Object> data = new HashMap<>();
 
             data.put("name", name);
+            data.put("age",age);
+            data.put("profileURL",profileUri);
+            data.put("pursuing",pursuing);
+            data.put("uid",uid);
+
+            Log.e(TAG, "uploadData: data ready to upload "+data );
 
             db.collection("Users").document(uid).set(data).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
@@ -39,6 +45,7 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
                 } else {
                     try {
                         postRegView.detailsUploadError(task.getException().getMessage());
+                        Log.e(TAG, "uploadData: data uploaded successfully" );
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

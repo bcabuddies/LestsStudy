@@ -1,5 +1,6 @@
 package com.bcabuddies.letsstudy.Registration.view;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,11 +14,16 @@ import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.Registration.Presenter.PostRegistrationPresenterImpl;
 import com.bcabuddies.letsstudy.utils.Utils;
 import com.bumptech.glide.Glide;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
@@ -38,6 +44,8 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     TextInputLayout postRegAgeLayout;
     @BindView(R.id.post_reg_inPursuing)
     TextView postRegInPursuing;
+    @BindView(R.id.post_reg_ageET)
+    TextInputEditText postRegAgeET;
 
     private FirebaseUser user;
     private FirebaseAuth auth;
@@ -46,6 +54,8 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     private PopupMenu popup;
     private Bundle b;
     private final static String TAG = "PostRegistration.java";
+    private String profile;
+    private final Calendar myCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +72,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
 
         menuInitiated();
         String name = b.getString("name");
-        String profile = b.getString("profile");
+        profile = b.getString("profile");
         preData(name, profile);
 
         FirebaseApp.initializeApp(this);
@@ -72,6 +82,13 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         presenter = new PostRegistrationPresenterImpl(firebaseFirestore, user);
         presenter.attachView(this);
         presenter.getMenu();
+    }
+
+    private void updateLabel() {
+        String myFormat = "MM/dd/yy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        postRegAgeLayout.getEditText().setText(sdf.format(myCalendar.getTime()));
     }
 
     private void preData(String name, String profile) {
@@ -122,27 +139,28 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         return null;
     }
 
-    @OnClick({R.id.post_reg_profileView, R.id.post_reg_ageLayout})
+    @OnClick({R.id.post_reg_profileView, R.id.post_reg_ageET, R.id.post_reg_inPursuing, R.id.button})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.post_reg_profileView:
                 profileUpdate();
                 break;
-            case R.id.post_reg_ageLayout:
+            case R.id.post_reg_ageET:
                 ageUpdate();
                 break;
+            case R.id.post_reg_inPursuing:
+                Log.e(TAG, "onPostRegInPursuingClicked: menu clicked ");
+                popup.show(); //showing popup menu
+                break;
+            case R.id.button:
+                presenter.uploadData(
+                        postRegNameLayout.getEditText().getText().toString(),
+                        postRegAgeLayout.getEditText().getText().toString(),
+                        profile,
+                        postRegInPursuing.getText().toString()
+                );
+                break;
         }
-    }
-
-    @OnClick(R.id.button)
-    public void onButtonClicked() {
-        presenter.uploadData(postRegNameLayout.getEditText().getText().toString());
-    }
-
-    @OnClick(R.id.post_reg_inPursuing)
-    public void onPostRegInPursuingClicked() {
-        Log.e(TAG, "onPostRegInPursuingClicked: menu clicked ");
-        popup.show(); //showing popup menu
     }
 
     private void pursuingUpdate() {
@@ -161,6 +179,18 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
 
     private void ageUpdate() {
         //need to add Calender to select age
+        final Calendar myCalendar = Calendar.getInstance();
+        DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
+            // TODO Auto-generated method stub
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            updateLabel();
+        };
+
+        new DatePickerDialog(this, date, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     private void profileUpdate() {
