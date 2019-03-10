@@ -23,7 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Home.MainActivity" />
+        <activity android:name=".Home.view.MainActivity" />
 
 
         <meta-data android:name="com.facebook.sdk.ApplicationId"

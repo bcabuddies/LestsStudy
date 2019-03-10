@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bcabuddies.letsstudy.Home.MainActivity;
+import com.bcabuddies.letsstudy.Home.view.MainActivity;
 import com.bcabuddies.letsstudy.Login.Presenter.LoginPresenter;
 import com.bcabuddies.letsstudy.Login.Presenter.LoginPresenterImpl;
 import com.bcabuddies.letsstudy.R;

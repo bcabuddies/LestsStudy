@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bcabuddies.letsstudy.Home.MainActivity;
+import com.bcabuddies.letsstudy.Home.view.MainActivity;
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.Registration.Presenter.PostRegistrationPresenterImpl;
 import com.bcabuddies.letsstudy.utils.Utils;

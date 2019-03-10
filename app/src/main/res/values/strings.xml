@@ -22,4 +22,6 @@
     <string name="divider">|</string>
     <string name="pursuing">Pursuing</string>
     <string name="_12th_bca_mca">12th, BCA, MCA</string>
+    <string name="study_points">Study Points</string>
+    <string name="_000000">000000</string>
 </resources>
