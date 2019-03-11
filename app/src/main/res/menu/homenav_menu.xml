@@ -6,7 +6,7 @@
         android:icon="@drawable/baseline_settings_black_48"/>
 
     <item android:title="Logout"
-        android:id="@+id/honemnav_settings"
+        android:id="@+id/homenav_logout"
         android:icon="@drawable/baseline_power_settings_new_black_48"/>
 
 </menu>

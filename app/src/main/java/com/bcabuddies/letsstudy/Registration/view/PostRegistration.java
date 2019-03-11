@@ -71,9 +71,16 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         }
 
         menuInitiated();
-        String name = b.getString("name");
-        profile = b.getString("profile");
-        preData(name, profile);
+
+       try{
+           String name = b.getString("name");
+           profile = b.getString("profile");
+           preData(name, profile);
+
+       }
+       catch (Exception e){
+           e.printStackTrace();
+       }
 
         FirebaseApp.initializeApp(this);
         auth = FirebaseAuth.getInstance();
