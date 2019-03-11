@@ -10,7 +10,6 @@ import com.bcabuddies.letsstudy.Home.Presenter.HomePresenterImpl;
 import com.bcabuddies.letsstudy.Login.view.Login;
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.utils.Utils;
-import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,10 +26,10 @@ public class MainActivity extends AppCompatActivity implements HomeView {
     @BindView(R.id.signOutBtn)
     Button signOutBtn;
     String TAG = "MainActivity.class";
-    @BindView(R.id.home_user_profileView)
+   /* @BindView(R.id.home_user_profileView)
     CircleImageView homeUserProfileView;
     @BindView(R.id.home_user_nameText)
-    TextView homeUserNameText;
+    TextView homeUserNameText;*/
 
     private HomePresenter presenter;
     private FirebaseAuth auth;
@@ -79,10 +78,11 @@ public class MainActivity extends AppCompatActivity implements HomeView {
     @Override
     public void getUserDetails(Bundle user) {
         //User data receive here
-        String name = user.getString("name");
+     /*   String name = user.getString("name");
         String profileURL = user.getString("profile");
         homeUserNameText.setText(name);
         Glide.with(this).load(profileURL).into(homeUserProfileView);
+   */
     }
 
     @Override
