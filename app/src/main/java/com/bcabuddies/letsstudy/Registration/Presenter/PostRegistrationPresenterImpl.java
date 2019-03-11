@@ -4,11 +4,16 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.bcabuddies.letsstudy.Registration.view.PostRegistrationView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
@@ -32,12 +37,12 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
             Map<String, Object> data = new HashMap<>();
 
             data.put("name", name);
-            data.put("age",age);
-            data.put("profileURL",profileUri);
-            data.put("pursuing",pursuing);
-            data.put("uid",uid);
+            data.put("age", age);
+            data.put("profileURL", profileUri);
+            data.put("pursuing", pursuing);
+            data.put("uid", uid);
 
-            Log.e(TAG, "uploadData: data ready to upload "+data );
+            Log.e(TAG, "uploadData: data ready to upload " + data);
 
             db.collection("Users").document(uid).set(data).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
@@ -45,7 +50,7 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
                 } else {
                     try {
                         postRegView.detailsUploadError(task.getException().getMessage());
-                        Log.e(TAG, "uploadData: data uploaded successfully" );
+                        Log.e(TAG, "uploadData: data uploaded successfully");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -68,6 +73,28 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
             } else {
                 //no data
                 Log.e(TAG, "getMenu: no data ");
+            }
+        });
+    }
+
+    public void firebaseDataPre() {
+        db.collection("Users").document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.getResult().exists()) {
+                    String profUrl;
+                    String name = task.getResult().getString("name");
+                    profUrl = task.getResult().getString("profileURL");
+                    if (profUrl == null) {
+                        profUrl = "https://firebasestorage.googleapis.com/v0/b/letsstudy-c77c3.appspot.com/o/user_defalut_profile%2Fdefault.png?alt=media&token=027c4d7f-8452-4ff9-a4c7-263b77254bd0";
+                    }
+                    String courseName = task.getResult().getString("pursuing");
+                    Log.e(TAG, "onComplete: firebasepredata: proff " + profUrl);
+                    postRegView.firebasePreData(name, profUrl, courseName);
+                    Log.e(TAG, "onComplete: firebasedatapre : " + name + "    " + profUrl + "    " + courseName);
+                } else {
+                    Log.e(TAG, "onComplete: firebasepredata: no data");
+                }
             }
         });
     }

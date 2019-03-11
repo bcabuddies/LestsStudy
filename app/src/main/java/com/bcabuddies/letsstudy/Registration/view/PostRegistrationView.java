@@ -10,4 +10,9 @@ public interface PostRegistrationView extends BaseView {
     void detailsUploadError(String message);
 
     void pursuingMenu(String[] list);
+
+    void firebasePreData(String name,String profUrl, String courseName);
+
+
+
 }

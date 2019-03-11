@@ -72,15 +72,14 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
 
         menuInitiated();
 
-       try{
-           String name = b.getString("name");
-           profile = b.getString("profile");
-           preData(name, profile);
+        try {
+            String name = b.getString("name");
+            profile = b.getString("profile");
+            preData(name, profile);
 
-       }
-       catch (Exception e){
-           e.printStackTrace();
-       }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         FirebaseApp.initializeApp(this);
         auth = FirebaseAuth.getInstance();
@@ -89,6 +88,9 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         presenter = new PostRegistrationPresenterImpl(firebaseFirestore, user);
         presenter.attachView(this);
         presenter.getMenu();
+
+        presenter.firebaseDataPre();
+
     }
 
     private void updateLabel() {
@@ -103,6 +105,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         Glide.with(this).load(profile)
                 .into(postRegProfileView);
     }
+
 
     private void menuInitiated() {
         Log.e(TAG, "menuInitiated: menu init ");
@@ -140,6 +143,17 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
             Log.e(TAG, "pursuingMenu: s " + s);
         }
     }
+
+    @Override
+    public void firebasePreData(String name, String profUrl, String courseName) {
+
+        if (!(name.equals(null) || profUrl.equals(null) || courseName.equals(null))) {
+            preData(name, profUrl);
+        } else {
+            Toast.makeText(this, "no data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     @Override
     public Context getContext() {

@@ -7,4 +7,5 @@ public interface PostRegistrationPresenter extends BasePresenter<PostRegistratio
     void uploadData(String name, String age, String profileUri, String pursuing);
 
     void getMenu();
+     void firebaseDataPre();
 }
