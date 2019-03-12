@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bcabuddies.letsstudy.Home.view.MainActivity;
@@ -42,10 +41,10 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     CircleImageView postRegProfileView;
     @BindView(R.id.post_reg_ageLayout)
     TextInputLayout postRegAgeLayout;
-    @BindView(R.id.post_reg_inPursuing)
-    TextView postRegInPursuing;
     @BindView(R.id.post_reg_ageET)
     TextInputEditText postRegAgeET;
+    @BindView(R.id.post_reg_inPursuing)
+    TextInputEditText postRegInPursuing;
 
     private FirebaseUser user;
     private FirebaseAuth auth;
@@ -145,10 +144,12 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     }
 
     @Override
-    public void firebasePreData(String name, String profUrl, String courseName) {
-
-        if (!(name.equals(null) || profUrl.equals(null) || courseName.equals(null))) {
-            preData(name, profUrl);
+    public void firebasePreData(String name, String profUrl, String courseName, String age) {
+        if (!(name == null || profUrl == null || courseName == null || age == null)) {
+            Glide.with(this).load(profUrl).into(postRegProfileView);
+            postRegNameLayout.getEditText().setText(name);
+            postRegAgeLayout.getEditText().setText(age);
+            postRegInPursuing.setText(courseName);
         } else {
             Toast.makeText(this, "no data", Toast.LENGTH_SHORT).show();
         }

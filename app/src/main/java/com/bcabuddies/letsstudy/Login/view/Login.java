@@ -157,7 +157,7 @@ public class Login extends AppCompatActivity implements LoginView {
                     try {
                         String id = object.getString("id");
                         fNname = object.getString("name");
-                        profUrl = "http://graph.facebook.com/" + id + "/picture?type=large";
+                        profUrl = "http://graph.facebook.com/" + id + "/picture?height=480&width=480";
                         Log.e("facebookRet", "name: " + fNname);
                         Log.e("facebookRet", "\n prof: " + profUrl);
                     } catch (JSONException e) {
@@ -200,7 +200,10 @@ public class Login extends AppCompatActivity implements LoginView {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 loginPresenter.firebaseAuthWithGoogle(account);
                 fNname = account.getDisplayName();
+                //profUrl = account.getPhotoUrl().toString();
                 profUrl = account.getPhotoUrl().toString();
+                //Remove thumbnail url and replace the original part of the Url with the new part
+                profUrl = profUrl.substring(0, profUrl.length() - 15) + "s400-c/photo.jpg";
                 Log.e("googleRet", "name: " + fNname);
                 Log.e("googleRet", "pofile: " + profUrl);
                 Log.v("mGoogleSignIn", "Google sign in try");

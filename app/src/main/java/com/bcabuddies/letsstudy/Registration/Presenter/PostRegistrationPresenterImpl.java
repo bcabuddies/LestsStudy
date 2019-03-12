@@ -35,16 +35,15 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
         } else {
             String uid = user.getUid();
             Map<String, Object> data = new HashMap<>();
-
             data.put("name", name);
             data.put("age", age);
-            data.put("profileURL", profileUri);
+            if (!(profileUri == null)) {
+                data.put("profileURL", profileUri);
+            }
             data.put("pursuing", pursuing);
             data.put("uid", uid);
-
             Log.e(TAG, "uploadData: data ready to upload " + data);
-
-            db.collection("Users").document(uid).set(data).addOnCompleteListener(task -> {
+            db.collection("Users").document(uid).update(data).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     postRegView.detailUploadSuccess();
                 } else {
@@ -83,14 +82,16 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.getResult().exists()) {
                     String profUrl;
-                    String name = task.getResult().getString("name");
                     profUrl = task.getResult().getString("profileURL");
                     if (profUrl == null) {
-                        profUrl = "https://firebasestorage.googleapis.com/v0/b/letsstudy-c77c3.appspot.com/o/user_defalut_profile%2Fdefault.png?alt=media&token=027c4d7f-8452-4ff9-a4c7-263b77254bd0";
+                        //  profUrl = "https://firebasestorage.googleapis.com/v0/b/letsstudy-c77c3.appspot.com/o/user_defalut_profile%2Fdefault.png?alt=media&token=027c4d7f-8452-4ff9-a4c7-263b77254bd0";
+                        profUrl = "";
                     }
+                    String name = task.getResult().getString("name");
                     String courseName = task.getResult().getString("pursuing");
+                    String age = task.getResult().getString("age");
                     Log.e(TAG, "onComplete: firebasepredata: proff " + profUrl);
-                    postRegView.firebasePreData(name, profUrl, courseName);
+                    postRegView.firebasePreData(name, profUrl, courseName, age);
                     Log.e(TAG, "onComplete: firebasedatapre : " + name + "    " + profUrl + "    " + courseName);
                 } else {
                     Log.e(TAG, "onComplete: firebasepredata: no data");
