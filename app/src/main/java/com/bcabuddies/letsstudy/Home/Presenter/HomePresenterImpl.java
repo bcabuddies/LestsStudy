@@ -31,7 +31,11 @@ public class HomePresenterImpl implements HomePresenter {
                 data.putString("profile",task.getResult().getString("profileURL"));
                 homeView.getUserDetails(data);
             } else {
-                Log.e(TAG, "user: error " + task.getException().getMessage());
+                try {
+                    Log.e(TAG, "user: error " + task.getException().getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

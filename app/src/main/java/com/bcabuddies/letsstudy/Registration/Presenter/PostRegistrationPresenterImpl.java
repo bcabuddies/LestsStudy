@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.NonNull;
 
@@ -43,19 +44,57 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
             data.put("pursuing", pursuing);
             data.put("uid", uid);
             Log.e(TAG, "uploadData: data ready to upload " + data);
-            db.collection("Users").document(uid).update(data).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    postRegView.detailUploadSuccess();
-                } else {
-                    try {
-                        postRegView.detailsUploadError(task.getException().getMessage());
-                        Log.e(TAG, "uploadData: data uploaded successfully");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+
+            if (checkUserData(uid)==1){
+                userDetailUpdate(data, uid);
+            } else if (checkUserData(uid)==0){
+                userDetailSet(data, uid);
+            }
         }
+    }
+
+    private void userDetailSet(Map<String, Object> data, String uid) {
+        db.collection("Users").document(uid).set(data).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                postRegView.detailUploadSuccess();
+            } else {
+                try {
+                    postRegView.detailsUploadError(task.getException().getMessage());
+                    Log.e(TAG, "uploadData: data uploaded successfully");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void userDetailUpdate(Map<String, Object> data, String uid) {
+        db.collection("Users").document(uid).update(data).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                postRegView.detailUploadSuccess();
+            } else {
+                try {
+                    postRegView.detailsUploadError(task.getException().getMessage());
+                    Log.e(TAG, "uploadData: data uploaded successfully");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    int checkUserData(String uid){
+        AtomicInteger res = new AtomicInteger();
+        db.collection("Users").document(uid).get().addOnCompleteListener(task -> {
+            if (task.getResult().exists()){
+                //data exist
+                Log.e(TAG, "checkUserData: data exsits " );
+                res.set(0);
+            } else {
+                res.set(1);
+            }
+        });
+        return res.get();
     }
 
     @Override

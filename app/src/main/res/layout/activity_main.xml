@@ -38,7 +38,7 @@
             app:headerLayout="@layout/homenav_header"
             app:menu="@menu/homenav_menu"
             android:id="@+id/home_nav"
-            ></com.google.android.material.navigation.NavigationView>
+            />
    </androidx.drawerlayout.widget.DrawerLayout>
 
 
