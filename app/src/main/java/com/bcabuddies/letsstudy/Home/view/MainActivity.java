@@ -3,7 +3,9 @@ package com.bcabuddies.letsstudy.Home.view;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bcabuddies.letsstudy.Home.Presenter.HomePresenter;
@@ -34,9 +36,8 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
 
     CircleImageView homeUserProfileView;
     TextView homeUserNameText;
+    ImageView topMenu;
 
-    @BindView(R.id.signOutBtn)
-    Button signOutBtn;
     @BindView(R.id.home_nav)
     NavigationView homeNav;
 
@@ -59,12 +60,15 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         presenter = new HomePresenterImpl(auth, db);
         presenter.attachView(this);
         presenter.user(user);
+
+        topBar();
     }
 
-    @OnClick(R.id.signOutBtn)
-    public void onViewClicked() {
-        //sign out
-        signout();
+    private void topBar() {
+        topMenu = findViewById(R.id.topMenu_topNav);
+        topMenu.setOnClickListener(v -> {
+            // TODO: 13-03-2019 show navbar on click
+        });
     }
 
     private void signout() {

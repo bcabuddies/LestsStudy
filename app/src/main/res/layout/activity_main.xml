@@ -14,16 +14,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/signOutBtn"
-                android:layout_width="0dp"
+            <include
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                layout="@layout/top_nav"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <include
+                layout="@layout/bottom_nav"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:background="@drawable/button_bg"
-                android:text="Sign Out"
-                android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -37,8 +41,7 @@
             android:layout_gravity="start"
             app:headerLayout="@layout/homenav_header"
             app:menu="@menu/homenav_menu"
-            android:id="@+id/home_nav"
-            />
+            android:id="@+id/home_nav" />
    </androidx.drawerlayout.widget.DrawerLayout>
 
 
