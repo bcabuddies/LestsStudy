@@ -2,9 +2,8 @@ package com.bcabuddies.letsstudy.Home.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,9 +22,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -40,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
 
     @BindView(R.id.home_nav)
     NavigationView homeNav;
+    @BindView(R.id.home_drawer_layout)
+    DrawerLayout homeDrawerLayout;
 
     private HomePresenter presenter;
     private FirebaseAuth auth;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
     private void topBar() {
         topMenu = findViewById(R.id.topMenu_topNav);
         topMenu.setOnClickListener(v -> {
-            // TODO: 13-03-2019 show navbar on click
+            homeDrawerLayout.openDrawer(Gravity.LEFT);
         });
     }
 
@@ -93,14 +94,12 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
     @Override
     public void getUserDetails(Bundle user) {
         //User data receive here
-
         homeUserProfileView = findViewById(R.id.home_user_profileView);
         homeUserNameText = findViewById(R.id.home_user_nameText);
         String name = user.getString("name");
         String profileURL = user.getString("profile");
         homeUserNameText.setText(name);
         Glide.with(this).load(profileURL).into(homeUserProfileView);
-
     }
 
 
@@ -122,4 +121,6 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         }
         return true;
     }
+
+
 }
