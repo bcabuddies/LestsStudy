@@ -1,5 +1,6 @@
 package com.bcabuddies.letsstudy.Home.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import com.bcabuddies.letsstudy.Home.Presenter.HomePresenter;
 import com.bcabuddies.letsstudy.Home.Presenter.HomePresenterImpl;
 import com.bcabuddies.letsstudy.Home.fragments.Explore_home;
 import com.bcabuddies.letsstudy.Home.fragments.Feed_home;
+import com.bcabuddies.letsstudy.Home.fragments.Notification_home;
 import com.bcabuddies.letsstudy.Home.fragments.Prep_home;
 import com.bcabuddies.letsstudy.Home.fragments.Test_home;
 import com.bcabuddies.letsstudy.Login.view.Login;
@@ -45,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
 
     CircleImageView homeUserProfileView;
     TextView homeUserNameText;
-    ImageView topMenu;
 
     @BindView(R.id.home_nav)
     NavigationView homeNav;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
     private Feed_home feedHomeFrag;
     private Prep_home prepHomeFrag;
     private Test_home testHomeFrag;
+    private Notification_home notificationFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,14 +95,15 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         presenter.attachView(this);
         presenter.user(user);
 
-        initilizefrags();
+        initializeFrags();
     }
 
-    private void initilizefrags() {
+    private void initializeFrags() {
         exploreHomeFrag = new Explore_home();
         feedHomeFrag = new Feed_home();
         prepHomeFrag = new Prep_home();
         testHomeFrag = new Test_home();
+        notificationFrag = new Notification_home();
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
@@ -108,15 +111,17 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         fragmentTransaction.add(R.id.home_frameLayout, feedHomeFrag);
         fragmentTransaction.add(R.id.home_frameLayout, prepHomeFrag);
         fragmentTransaction.add(R.id.home_frameLayout, testHomeFrag);
+        fragmentTransaction.add(R.id.home_frameLayout, notificationFrag);
 
         fragmentTransaction.hide(exploreHomeFrag);
         fragmentTransaction.hide(prepHomeFrag);
         fragmentTransaction.hide(testHomeFrag);
+        fragmentTransaction.hide(notificationFrag);
 
         fragmentTransaction.commit();
     }
 
-    private void signout() {
+    private void signOut() {
         auth.signOut();
         try {
             LoginManager.getInstance().logOut();
@@ -160,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
                 Utils.setIntent(this, PostRegistration.class);
                 break;
             case R.id.homenav_logout:
-                signout();
+                signOut();
                 break;
         }
         return true;
@@ -176,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
             fragmentTransaction.hide(prepHomeFrag);
             fragmentTransaction.hide(testHomeFrag);
             fragmentTransaction.hide(exploreHomeFrag);
+            fragmentTransaction.hide(notificationFrag);
         }
         if (fragment == prepHomeFrag) {
             Log.e(TAG, "fragmentReplace: prep");
@@ -183,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
             fragmentTransaction.hide(feedHomeFrag);
             fragmentTransaction.hide(testHomeFrag);
             fragmentTransaction.hide(exploreHomeFrag);
+            fragmentTransaction.hide(notificationFrag);
         }
         if (fragment == testHomeFrag) {
             Log.e(TAG, "fragmentReplace: test");
@@ -190,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
             fragmentTransaction.hide(prepHomeFrag);
             fragmentTransaction.hide(feedHomeFrag);
             fragmentTransaction.hide(exploreHomeFrag);
+            fragmentTransaction.hide(notificationFrag);
         }
         if (fragment == exploreHomeFrag) {
             Log.e(TAG, "fragmentReplace: explore");
@@ -197,23 +205,26 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
             fragmentTransaction.hide(prepHomeFrag);
             fragmentTransaction.hide(testHomeFrag);
             fragmentTransaction.hide(feedHomeFrag);
+            fragmentTransaction.hide(notificationFrag);
+        }
+        if (fragment == notificationFrag) {
+            Log.e(TAG, "fragmentReplace: notification");
+            fragmentTransaction.show(notificationFrag);
+            fragmentTransaction.hide(prepHomeFrag);
+            fragmentTransaction.hide(testHomeFrag);
+            fragmentTransaction.hide(exploreHomeFrag);
+            fragmentTransaction.hide(feedHomeFrag);
         }
         try {
             fragmentTransaction.show(fragment);
             fragmentTransaction.commit();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e(TAG, "fragmentReplace: exception in fragReplace "+e.getMessage() );
+            Log.e(TAG, "fragmentReplace: exception in fragReplace " + e.getMessage());
         }
     }
 
-    @OnClick(R.id.topMenu_topNav)
-    public void onViewClicked() {
-        //top nev opener
-        homeDrawerLayout.openDrawer(Gravity.LEFT);
-    }
-
-    @OnClick({R.id.feed_bNav, R.id.prep_bNav, R.id.test_bNav, R.id.explore_bNav})
+    @OnClick({R.id.feed_bNav, R.id.prep_bNav, R.id.test_bNav, R.id.explore_bNav,R.id.topMenu_topNav, R.id.noti_topNav})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.feed_bNav:
@@ -227,6 +238,13 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
                 break;
             case R.id.explore_bNav:
                 fragmentReplace(exploreHomeFrag);
+                break;
+            case R.id.noti_topNav:
+                Log.e(TAG, "onViewClicked: noti clicked " );
+                fragmentReplace(notificationFrag);
+                break;
+            case R.id.topMenu_topNav:
+                homeDrawerLayout.openDrawer(Gravity.LEFT);
                 break;
         }
     }
