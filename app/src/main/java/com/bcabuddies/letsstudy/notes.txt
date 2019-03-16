@@ -14,3 +14,7 @@ Notes:
 
 10.Need to retrieve menu items from the database so we can add more items from server
 12.Need to update Home/MainActivity.java to show the user data on the front page just for testing
+
+13.Added Fragments
+
+14.Add animation to the Fragments and also Add Animation to Bottom NavigationBar's ImageViews

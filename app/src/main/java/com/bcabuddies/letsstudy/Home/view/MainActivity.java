@@ -1,6 +1,5 @@
 package com.bcabuddies.letsstudy.Home.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -224,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         }
     }
 
-    @OnClick({R.id.feed_bNav, R.id.prep_bNav, R.id.test_bNav, R.id.explore_bNav,R.id.topMenu_topNav, R.id.noti_topNav})
+    @OnClick({R.id.feed_bNav, R.id.prep_bNav, R.id.test_bNav, R.id.explore_bNav, R.id.topMenu_topNav, R.id.noti_topNav})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.feed_bNav:
@@ -240,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
                 fragmentReplace(exploreHomeFrag);
                 break;
             case R.id.noti_topNav:
-                Log.e(TAG, "onViewClicked: noti clicked " );
+                Log.e(TAG, "onViewClicked: noti clicked ");
                 fragmentReplace(notificationFrag);
                 break;
             case R.id.topMenu_topNav:
