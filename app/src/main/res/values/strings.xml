@@ -27,4 +27,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="enter_description">Enter Description</string>
+    <string name="submit_text">Submit Text</string>
+    <string name="upload_photo">Upload Photo</string>
+    <string name="contribute_to_the_community">Contribute to the community</string>
 </resources>
