@@ -24,4 +24,7 @@
     <string name="_12th_bca_mca">12th, BCA, MCA</string>
     <string name="study_points">Study Points</string>
     <string name="_000000">000000</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

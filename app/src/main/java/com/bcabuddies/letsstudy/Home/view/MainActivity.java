@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         return null;
     }
 
-    //side navigagtion menu clicked
+    //side navigation menu clicked
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
