@@ -111,8 +111,7 @@ public class Login extends AppCompatActivity implements LoginView {
 
 
     }
-
-
+    
     @Override
     protected void onStart() {
         super.onStart();
@@ -220,7 +219,6 @@ public class Login extends AppCompatActivity implements LoginView {
         }
     }
 
-
     private void Registration() {
         Intent sharedIntent = new Intent(Login.this, Registration.class);
         Pair[] pairs = new Pair[3];
@@ -230,7 +228,6 @@ public class Login extends AppCompatActivity implements LoginView {
         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, pairs);
         startActivity(sharedIntent, options.toBundle());
     }
-
 
     private void GoogleLogin() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -274,7 +271,6 @@ public class Login extends AppCompatActivity implements LoginView {
         data.putString("profile", profUrl);
         Utils.setIntentExtra(this, PostRegistration.class, "data", data);
     }
-
 
     @Override
     public void loginError(String error) {

@@ -70,6 +70,7 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
                     }
                     else
                     {
+                        postRegView.detailsUploadError(task.getException().getMessage());
                         Log.e(TAG, "onComplete:try:  "+task.getException() );
                     }
                 }

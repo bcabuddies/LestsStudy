@@ -5,6 +5,6 @@ import com.bcabuddies.letsstudy.Home.view.HomeView;
 import com.google.firebase.auth.FirebaseUser;
 
 public interface HomePresenter extends BasePresenter<HomeView> {
-    void user(FirebaseUser user);
+     void user(FirebaseUser user);
      void firebaseDataPre();
 }

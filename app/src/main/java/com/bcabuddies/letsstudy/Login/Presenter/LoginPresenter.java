@@ -10,6 +10,7 @@ public interface LoginPresenter extends BasePresenter<LoginView> {
     void login(String email, String password);
 
     void firebaseAuthWithGoogle(GoogleSignInAccount account);
+
     void handleFacebookAccessToken(AccessToken token);
 
     void checkLogin();

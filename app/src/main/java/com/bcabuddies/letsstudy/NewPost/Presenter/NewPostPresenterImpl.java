@@ -1,30 +1,33 @@
 package com.bcabuddies.letsstudy.NewPost.Presenter;
 
-import android.os.Bundle;
+import android.net.Uri;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.bcabuddies.letsstudy.NewPost.view.NewPostView;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.StorageReference;
 
-public class NewPostPresenterImpl implements NewPostPresenter{
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+public class NewPostPresenterImpl implements NewPostPresenter {
 
     private FirebaseUser user;
     private FirebaseFirestore db;
     private NewPostView postView;
+    private StorageReference thumbImgRef;
+    private static final String TAG = "NewPostPresImpl.java";
+    private Uri thumb_downloadUri;
 
-    public NewPostPresenterImpl(FirebaseUser user, FirebaseFirestore db) {
+    public NewPostPresenterImpl(FirebaseUser user, FirebaseFirestore db, StorageReference thumbImgRef) {
         this.user = user;
         this.db = db;
-    }
-
-    @Override
-    public void textPost(Bundle b) {
-
-    }
-
-    @Override
-    public void imagePost(Bundle b) {
-
+        this.thumbImgRef = thumbImgRef;
     }
 
     @Override
@@ -35,5 +38,48 @@ public class NewPostPresenterImpl implements NewPostPresenter{
     @Override
     public void detachView() {
         postView = null;
+    }
+
+    @Override
+    public void imagePost(byte[] thumb_byte, String text) {
+        String randomName = UUID.randomUUID().toString();
+        Log.e(TAG, "imagePost: text " + text + " thumb byte " + thumb_byte.length);
+        final StorageReference thumb_filePath = thumbImgRef.child(randomName + ".jpg");
+        thumb_filePath.putBytes(thumb_byte).addOnSuccessListener(taskSnapshot -> {
+
+            //error here somewhere
+
+            String result;
+            result = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult().toString();
+            if (!TextUtils.isEmpty(result)) {
+                Task<Uri> getDownloadUri = taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
+                    thumb_downloadUri = uri;
+                    Log.e(TAG, "imagePost: thumb uri " + uri);
+                    uploadData(thumb_downloadUri, text);
+                });
+            } else {
+                Log.e(TAG, "imagePost: error " + taskSnapshot.getError().getMessage());
+                postView.errorUpload(taskSnapshot.getError().getMessage());
+            }
+        });
+    }
+
+    private void uploadData(Uri thumb_downloadUri, String text) {
+        Log.e(TAG, "uploadData: entered data upload ");
+        Map<String, Object> map = new HashMap<>();
+        map.put("url", thumb_downloadUri);
+        map.put("type", "photo");
+        map.put("time", FieldValue.serverTimestamp());
+        map.put("text", text);
+        map.put("user", user.getUid());
+        db.collection("Posts").document().set(map).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                postView.uploadSuccess();
+                Log.e(TAG, "uploadData: upload success");
+            } else {
+                postView.errorUpload(task.getException().getMessage());
+                Log.e(TAG, "uploadData: upload error " + task.getException().getMessage());
+            }
+        });
     }
 }

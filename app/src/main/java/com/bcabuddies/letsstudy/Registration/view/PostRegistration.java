@@ -207,7 +207,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.post_reg_profileView:
-                profileUpdate();
+                imagePicker();
                 break;
             case R.id.post_reg_ageET:
                 ageUpdate();
@@ -268,10 +268,6 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
                 myCalendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
-    private void profileUpdate() {
-        //need to create option to select or click image
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -290,18 +286,12 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
                 thumb_Bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
                 final byte[] thumb_byte = byteArrayOutputStream.toByteArray();
                 final StorageReference thumb_filePath = thumbImgRef.child(auth.getCurrentUser().getUid() + ".jpg");
-                thumb_filePath.putBytes(thumb_byte).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        getDownloadUri = taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                thumb_downloadUrl = uri;
-                                Log.v("mkey", "thumb download url: " + thumb_downloadUrl);
-                            }
-                        });
-                        postRegProfileView.setImageURI(mainImageUri);
-                    }
+                thumb_filePath.putBytes(thumb_byte).addOnSuccessListener(taskSnapshot -> {
+                    getDownloadUri = taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
+                        thumb_downloadUrl = uri;
+                        Log.v("mkey", "thumb download url: " + thumb_downloadUrl);
+                    });
+                    postRegProfileView.setImageURI(mainImageUri);
                 });
             }
         }
