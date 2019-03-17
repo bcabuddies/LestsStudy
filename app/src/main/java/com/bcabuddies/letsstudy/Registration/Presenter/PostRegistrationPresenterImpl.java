@@ -1,8 +1,10 @@
 package com.bcabuddies.letsstudy.Registration.Presenter;
 
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.bcabuddies.letsstudy.Registration.view.PostRegistration;
 import com.bcabuddies.letsstudy.Registration.view.PostRegistrationView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,71 +32,52 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
     }
 
     @Override
-    public void uploadData(String name, String age, String profileUri, String pursuing) {
-        if (TextUtils.isEmpty(name)) {
+    public void uploadData(String name, String age, String profileUri, String pursuing, Uri thumb_downloadUrl) {
+        if (name.isEmpty()) {
             postRegView.showValidationError();
-        } else {
-            String uid = user.getUid();
-            Map<String, Object> data = new HashMap<>();
-            data.put("name", name);
-            data.put("age", age);
+            Log.e(TAG, "uploadData: if" );
+        } else if (thumb_downloadUrl == null) {
+            Log.e(TAG, "uploadData: else if" );
             if (!(profileUri == null)) {
-                data.put("profileURL", profileUri);
+                thumb_downloadUrl =thumb_downloadUrl.parse(profileUri) ;
+                Log.e(TAG, "uploadData: else if- if"+profileUri );
+                detailsUpload(name,age,profileUri,pursuing,thumb_downloadUrl);
+            } else {
+                Log.e(TAG, "uploadData: else if- else"+thumb_downloadUrl );
+                thumb_downloadUrl =thumb_downloadUrl.parse("https://firebasestorage.googleapis.com/v0/b/fitsteps-311ed.appspot.com/o/default_user_thumb%2Fdefault.png?alt=media&token=c2de219c-9430-48bf-84c1-b2ba0b37be66");
+                detailsUpload(name,age,profileUri,pursuing,thumb_downloadUrl);
             }
-            data.put("pursuing", pursuing);
-            data.put("uid", uid);
-            Log.e(TAG, "uploadData: data ready to upload " + data);
-
-            if (checkUserData(uid)==1){
-                userDetailUpdate(data, uid);
-            } else if (checkUserData(uid)==0){
-                userDetailSet(data, uid);
-            }
+        } else {
+          detailsUpload(name,age,profileUri,pursuing,thumb_downloadUrl);
         }
     }
 
-    private void userDetailSet(Map<String, Object> data, String uid) {
-        db.collection("Users").document(uid).set(data).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                postRegView.detailUploadSuccess();
-            } else {
-                try {
-                    postRegView.detailsUploadError(task.getException().getMessage());
-                    Log.e(TAG, "uploadData: data uploaded successfully");
-                } catch (Exception e) {
-                    e.printStackTrace();
+    public void detailsUpload(String name, String age, String profileUri, String pursuing, Uri thumb_downloadUrl){
+        String uid = user.getUid();
+        HashMap <String, Object> data = new HashMap<>();
+        data.put("name", name);
+        data.put("age", age);
+        data.put("profileURL", thumb_downloadUrl.toString());
+        data.put("pursuing", pursuing);
+        data.put("uid", uid);
+        Log.e(TAG, "uploadData: data ready to upload " + data);
+        try {
+            db.collection("Users").document(uid).set(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        postRegView.detailUploadSuccess();
+                    }
+                    else
+                    {
+                        Log.e(TAG, "onComplete:try:  "+task.getException() );
+                    }
                 }
-            }
-        });
-    }
-
-    private void userDetailUpdate(Map<String, Object> data, String uid) {
-        db.collection("Users").document(uid).update(data).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                postRegView.detailUploadSuccess();
-            } else {
-                try {
-                    postRegView.detailsUploadError(task.getException().getMessage());
-                    Log.e(TAG, "uploadData: data uploaded successfully");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    int checkUserData(String uid){
-        AtomicInteger res = new AtomicInteger();
-        db.collection("Users").document(uid).get().addOnCompleteListener(task -> {
-            if (task.getResult().exists()){
-                //data exist
-                Log.e(TAG, "checkUserData: data exsits " );
-                res.set(0);
-            } else {
-                res.set(1);
-            }
-        });
-        return res.get();
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "onClick: error " + e.getMessage());
+        }
     }
 
     @Override

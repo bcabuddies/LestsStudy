@@ -150,6 +150,17 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         Glide.with(this).load(profileURL).into(homeUserProfileView);
     }
 
+    @Override
+    public void firebaseData(String profUrl, String fName, String age, String course) {
+        Bundle data = new Bundle();
+        Log.e(TAG, "thirdPartyLoginSuccess: name and profile " + fName + " " + profUrl);
+        data.putString("name", fName);
+        data.putString("profile", profUrl);
+        data.putString("age",age);
+        data.putString("course",course);
+        Utils.setIntentExtra(this, PostRegistration.class, "data", data);
+    }
+
 
     @Override
     public Context getContext() {
@@ -161,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.homenav_settings:
-                Utils.setIntent(this, PostRegistration.class);
+                presenter.firebaseDataPre();
                 break;
             case R.id.homenav_logout:
                 signOut();
