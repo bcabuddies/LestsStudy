@@ -28,6 +28,7 @@ public class NewPostPresenterImpl implements NewPostPresenter {
         this.user = user;
         this.db = db;
         this.thumbImgRef = thumbImgRef;
+        Log.e(TAG, "NewPostPresenterImpl: thumb: "+thumbImgRef.toString() );
     }
 
     @Override
@@ -46,33 +47,37 @@ public class NewPostPresenterImpl implements NewPostPresenter {
         Log.e(TAG, "imagePost: text " + text + " thumb byte " + thumb_byte.length);
         final StorageReference thumb_filePath = thumbImgRef.child(randomName + ".jpg");
         thumb_filePath.putBytes(thumb_byte).addOnSuccessListener(taskSnapshot -> {
-
+            Task<Uri> getDownloadUri = taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
+                thumb_downloadUri = uri;
+                Log.e(TAG, "imagePost: thumb_uri " + uri.toString());
+                uploadData(thumb_downloadUri, text);
+            });
             //error here somewhere
 
-            String result;
-            result = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult().toString();
-            if (!TextUtils.isEmpty(result)) {
+           // String result;
+            //result = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult().toString();
+         /*   if (!TextUtils.isEmpty(result)) {
                 Task<Uri> getDownloadUri = taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
                     thumb_downloadUri = uri;
-                    Log.e(TAG, "imagePost: thumb uri " + uri);
+                    Log.e(TAG, "imagePost: thumb_uri " + uri.toString());
                     uploadData(thumb_downloadUri, text);
                 });
             } else {
                 Log.e(TAG, "imagePost: error " + taskSnapshot.getError().getMessage());
                 postView.errorUpload(taskSnapshot.getError().getMessage());
-            }
+            }*/
         });
     }
 
     private void uploadData(Uri thumb_downloadUri, String text) {
         Log.e(TAG, "uploadData: entered data upload ");
         Map<String, Object> map = new HashMap<>();
-        map.put("url", thumb_downloadUri);
+        map.put("url", thumb_downloadUri.toString());
         map.put("type", "photo");
         map.put("time", FieldValue.serverTimestamp());
         map.put("text", text);
         map.put("user", user.getUid());
-        db.collection("Posts").document().set(map).addOnCompleteListener(task -> {
+        db.collection("Posts").add(map).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 postView.uploadSuccess();
                 Log.e(TAG, "uploadData: upload success");

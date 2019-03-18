@@ -1,20 +1,17 @@
 package com.bcabuddies.letsstudy.Registration.Presenter;
 
 import android.net.Uri;
-import android.text.TextUtils;
 import android.util.Log;
 
-import com.bcabuddies.letsstudy.Registration.view.PostRegistration;
 import com.bcabuddies.letsstudy.Registration.view.PostRegistrationView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.NonNull;
 
@@ -25,36 +22,40 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
     private PostRegistrationView postRegView;
     private FirebaseFirestore db;
     private FirebaseUser user;
+    private StorageReference thumbImgRef;
+    private Uri thumb_downloadUrl = null;
+    private Task<Uri> getDownloadUri;
 
-    public PostRegistrationPresenterImpl(FirebaseFirestore db, FirebaseUser user) {
+    public PostRegistrationPresenterImpl(FirebaseFirestore db, FirebaseUser user, StorageReference thumbImgRef) {
         this.db = db;
         this.user = user;
+        this.thumbImgRef = thumbImgRef;
     }
 
     @Override
-    public void uploadData(String name, String age, String profileUri, String pursuing, Uri thumb_downloadUrl) {
+    public void uploadData(String name, String age, String profileUri, String pursuing) {
         if (name.isEmpty()) {
             postRegView.showValidationError();
-            Log.e(TAG, "uploadData: if" );
+            Log.e(TAG, "uploadData: if");
         } else if (thumb_downloadUrl == null) {
-            Log.e(TAG, "uploadData: else if" );
+            Log.e(TAG, "uploadData: else if");
             if (!(profileUri == null)) {
-                thumb_downloadUrl =thumb_downloadUrl.parse(profileUri) ;
-                Log.e(TAG, "uploadData: else if- if"+profileUri );
-                detailsUpload(name,age,profileUri,pursuing,thumb_downloadUrl);
+                thumb_downloadUrl = thumb_downloadUrl.parse(profileUri);
+                Log.e(TAG, "uploadData: else if- if" + profileUri);
+                detailsUpload(name, age, profileUri, pursuing, thumb_downloadUrl);
             } else {
-                Log.e(TAG, "uploadData: else if- else"+thumb_downloadUrl );
-                thumb_downloadUrl =thumb_downloadUrl.parse("https://firebasestorage.googleapis.com/v0/b/fitsteps-311ed.appspot.com/o/default_user_thumb%2Fdefault.png?alt=media&token=c2de219c-9430-48bf-84c1-b2ba0b37be66");
-                detailsUpload(name,age,profileUri,pursuing,thumb_downloadUrl);
+                Log.e(TAG, "uploadData: else if- else" + thumb_downloadUrl);
+                thumb_downloadUrl = thumb_downloadUrl.parse("https://firebasestorage.googleapis.com/v0/b/fitsteps-311ed.appspot.com/o/default_user_thumb%2Fdefault.png?alt=media&token=c2de219c-9430-48bf-84c1-b2ba0b37be66");
+                detailsUpload(name, age, profileUri, pursuing, thumb_downloadUrl);
             }
         } else {
-          detailsUpload(name,age,profileUri,pursuing,thumb_downloadUrl);
+            detailsUpload(name, age, profileUri, pursuing, thumb_downloadUrl);
         }
     }
 
-    public void detailsUpload(String name, String age, String profileUri, String pursuing, Uri thumb_downloadUrl){
+    public void detailsUpload(String name, String age, String profileUri, String pursuing, Uri thumb_downloadUrl) {
         String uid = user.getUid();
-        HashMap <String, Object> data = new HashMap<>();
+        HashMap<String, Object> data = new HashMap<>();
         data.put("name", name);
         data.put("age", age);
         data.put("profileURL", thumb_downloadUrl.toString());
@@ -67,11 +68,9 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         postRegView.detailUploadSuccess();
-                    }
-                    else
-                    {
+                    } else {
                         postRegView.detailsUploadError(task.getException().getMessage());
-                        Log.e(TAG, "onComplete:try:  "+task.getException() );
+                        Log.e(TAG, "onComplete:try:  " + task.getException());
                     }
                 }
             });
@@ -120,6 +119,16 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
                     Log.e(TAG, "onComplete: firebasepredata: no data");
                 }
             }
+        });
+    }
+
+    public void imagePost(byte[] thumb_byte) {
+        final StorageReference thumb_filePath = thumbImgRef.child(user.getUid() + ".jpg");
+        thumb_filePath.putBytes(thumb_byte).addOnSuccessListener(taskSnapshot -> {
+            getDownloadUri = taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
+                thumb_downloadUrl = uri;
+                Log.e("mkey", "thumb download url: " + thumb_downloadUrl);
+            });
         });
     }
 
