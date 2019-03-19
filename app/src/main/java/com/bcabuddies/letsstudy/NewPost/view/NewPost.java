@@ -49,16 +49,15 @@ public class NewPost extends AppCompatActivity implements NewPostView {
     @BindView(R.id.newPost_addImageView)
     ImageView newPostAddImageView;
 
-    private FirebaseUser user;
-    private FirebaseFirestore db;
     private static final String TAG = "NewPost.java";
+    @BindView(R.id.topMenu_topNav)
+    ImageView topMenuTopNav;
+    @BindView(R.id.noti_topNav)
+    ImageView notiTopNav;
     private NewPostPresenter presenter;
     private Bundle b = new Bundle();
-    private Uri imageUri;
     private Bitmap thumb_bitmap;
-    private StorageReference thumbImgRef;
     private byte[] thumb_byte;
-    private String text;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -68,14 +67,23 @@ public class NewPost extends AppCompatActivity implements NewPostView {
         ButterKnife.bind(this);
 
         FirebaseApp.initializeApp(this);
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        db = FirebaseFirestore.getInstance();
-        thumbImgRef = FirebaseStorage.getInstance().getReference().child("Post_images");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        StorageReference thumbImgRef = FirebaseStorage.getInstance().getReference().child("Post_images");
 
         presenter = new NewPostPresenterImpl(user, db, thumbImgRef);
         presenter.attachView(this);
 
+        hideTopBarButtons();
+
         textTopNav.setText("Add Post");
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void hideTopBarButtons() {
+        textTopNav.setText("New Post");
+        topMenuTopNav.setVisibility(View.GONE);
+        notiTopNav.setVisibility(View.GONE);
     }
 
     @Override
@@ -96,14 +104,14 @@ public class NewPost extends AppCompatActivity implements NewPostView {
     }
 
     private void addImage() {
-        Log.e(TAG, "addImage: upload photo clicked " );
+        Log.e(TAG, "addImage: upload photo clicked ");
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .start(this);
     }
 
     private void uploadPost() {
-        text = newPostDescLayout.getEditText().getText().toString();
+        String text = newPostDescLayout.getEditText().getText().toString();
         if (thumb_byte.length == 0 && !TextUtils.isEmpty(text)) {
             Log.e(TAG, "uploadPost: thumb_byte length " + thumb_byte.length);
             Utils.showMessage(this, "Please select a photo and fill the description");
@@ -121,17 +129,17 @@ public class NewPost extends AppCompatActivity implements NewPostView {
     @Override
     public void uploadSuccess() {
         Utils.showMessage(this, "Upload Success");
-        //Utils.setIntent(this, MainActivity.class);
+        Utils.setIntent(this, MainActivity.class);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e(TAG, "onActivityResult: started" );
+        Log.e(TAG, "onActivityResult: started");
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                imageUri = result.getUri();
+                Uri imageUri = result.getUri();
                 Log.e(TAG, "onActivityResult: image uri " + imageUri);
                 File thumb_filePathUri = new File(imageUri.getPath());
                 try {
@@ -146,7 +154,7 @@ public class NewPost extends AppCompatActivity implements NewPostView {
                 thumb_byte = byteArrayOutputStream.toByteArray();
                 newPostAddImageView.setImageURI(imageUri);
             } else {
-                Log.e(TAG, "onActivityResult: resultCode not ok "+requestCode );
+                Log.e(TAG, "onActivityResult: resultCode not ok " + requestCode);
             }
         }
     }

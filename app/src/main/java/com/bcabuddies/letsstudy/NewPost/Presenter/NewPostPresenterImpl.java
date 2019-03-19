@@ -1,7 +1,6 @@
 package com.bcabuddies.letsstudy.NewPost.Presenter;
 
 import android.net.Uri;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.bcabuddies.letsstudy.NewPost.view.NewPostView;
@@ -28,7 +27,7 @@ public class NewPostPresenterImpl implements NewPostPresenter {
         this.user = user;
         this.db = db;
         this.thumbImgRef = thumbImgRef;
-        Log.e(TAG, "NewPostPresenterImpl: thumb: "+thumbImgRef.toString() );
+        Log.e(TAG, "NewPostPresenterImpl: thumb: " + thumbImgRef.toString());
     }
 
     @Override
@@ -51,21 +50,7 @@ public class NewPostPresenterImpl implements NewPostPresenter {
                 thumb_downloadUri = uri;
                 Log.e(TAG, "imagePost: thumb_uri " + uri.toString());
                 uploadData(thumb_downloadUri, text);
-            });
-            //error here somewhere
-
-           // String result;
-            //result = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult().toString();
-         /*   if (!TextUtils.isEmpty(result)) {
-                Task<Uri> getDownloadUri = taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
-                    thumb_downloadUri = uri;
-                    Log.e(TAG, "imagePost: thumb_uri " + uri.toString());
-                    uploadData(thumb_downloadUri, text);
-                });
-            } else {
-                Log.e(TAG, "imagePost: error " + taskSnapshot.getError().getMessage());
-                postView.errorUpload(taskSnapshot.getError().getMessage());
-            }*/
+            }).addOnFailureListener(e -> postView.errorUpload(e.getMessage()));
         });
     }
 
@@ -74,7 +59,7 @@ public class NewPostPresenterImpl implements NewPostPresenter {
         Map<String, Object> map = new HashMap<>();
         map.put("url", thumb_downloadUri.toString());
         map.put("type", "photo");
-        map.put("time", FieldValue.serverTimestamp());
+        map.put("timestamp", FieldValue.serverTimestamp());
         map.put("text", text);
         map.put("user", user.getUid());
         db.collection("Posts").add(map).addOnCompleteListener(task -> {

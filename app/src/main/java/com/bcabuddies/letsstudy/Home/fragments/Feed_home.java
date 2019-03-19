@@ -11,9 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.bcabuddies.letsstudy.Adapter.PostRecyclerAdapter;
 import com.bcabuddies.letsstudy.Home.Presenter.Feed_homePresenter;
 import com.bcabuddies.letsstudy.Home.Presenter.Feed_homePresenterImpl;
 import com.bcabuddies.letsstudy.Home.view.Feed_homeView;
+import com.bcabuddies.letsstudy.Model.PostData;
+import com.bcabuddies.letsstudy.Model.UserData;
 import com.bcabuddies.letsstudy.NewPost.view.NewPost;
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.utils.Utils;
@@ -22,7 +25,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,6 +53,9 @@ public class Feed_home extends Fragment implements Feed_homeView {
     private Feed_homePresenter presenter;
     private FirebaseFirestore db;
     private FirebaseUser user;
+    private PostRecyclerAdapter postRecyclerAdapter;
+    private ArrayList<PostData> postList;
+    private ArrayList<UserData> userList;
 
     public Feed_home() {
         // Required empty public constructor
@@ -61,14 +70,27 @@ public class Feed_home extends Fragment implements Feed_homeView {
         View view = inflater.inflate(R.layout.fragment_feed_home, container, false);
         ButterKnife.bind(this, view);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();;
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        ;
         db = FirebaseFirestore.getInstance();
 
         presenter = new Feed_homePresenterImpl(user, db);
         presenter.attachView(this);
         presenter.getData();
 
+
+        //recyclerView
+        recyclerViewInit();
+
         return view;
+    }
+
+    private void recyclerViewInit() {
+        postList = new ArrayList<>();
+        userList = new ArrayList<>();
+        postRecyclerAdapter = new PostRecyclerAdapter(postList, userList);
+        feedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        feedRecyclerView.setAdapter(postRecyclerAdapter);
     }
 
     @OnClick({R.id.feed_textSubmitBtn, R.id.feed_photoSubmitBtn})
@@ -95,12 +117,12 @@ public class Feed_home extends Fragment implements Feed_homeView {
     private void uploadText() {
         String text;
         text = feedTextLayout.getEditText().getText().toString();
-        if (textValidity(text)){
+        if (textValidity(text)) {
             //sending data to presenter
             Bundle b = new Bundle();
             b.putString("text", text);
-            b.putString("user",user.getUid());
-            b.putString("type","text");
+            b.putString("user", user.getUid());
+            b.putString("type", "text");
             presenter.uploadText(b);
         } else {
             feedTextLayout.setHelperTextColor(ColorStateList.valueOf(Color.RED));
@@ -110,8 +132,11 @@ public class Feed_home extends Fragment implements Feed_homeView {
     }
 
     @Override
-    public void getData(Bundle b) {
-        //data for RecyclerView
+    public void getData(ArrayList<PostData> pData, ArrayList<UserData> uData) {
+        //getting user and post data from presenter
+        postList = pData;
+        userList = uData;
+        postRecyclerAdapter.notifyDataSetChanged();
     }
 
     @Override
