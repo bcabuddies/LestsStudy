@@ -10,13 +10,17 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bcabuddies.letsstudy.Model.PostData;
 import com.bcabuddies.letsstudy.Model.UserData;
 import com.bcabuddies.letsstudy.R;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -68,9 +72,9 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         final String text = postList.get(position).getText();
         final Date timestamp = postList.get(position).getTimestamp();
         final String type = postList.get(position).getType();
-        final String user = postList.get(position).getUser();
+        final String postUserId = postList.get(position).getUser();
         final String url = postList.get(position).getUrl();
-
+/*
         try {
             String name = userList.get(position).getName();
             String userProf = userList.get(position).getProfileURL();
@@ -82,12 +86,29 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             Log.e(TAG, "onBindViewHolder: name: "+name );
         } catch (Exception e) {
             Log.e(TAG, "onBindViewHolder: name error "+e.getMessage() );
-        }
+        }*/
 
         if (postList.get(position).getUrl() != null) {
             Log.e(TAG, "onBindViewHolder: url null" + position);
             holder.setPostImageView(url);
         }
+
+        //this will retrieve user data at for each position
+        firebaseFirestore.collection("Users").document(postUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+           if (task.isSuccessful()){
+               String fName=task.getResult().getString("name");
+               String profUrl=task.getResult().getString("profileURL");
+               holder.setNameTV(fName);
+               holder.setProf(profUrl);
+           }
+           else {
+               Log.e(TAG, "onComplete: error" );
+           }
+            }
+        });
+
         holder.descSet(text);
 
         try {
@@ -101,6 +122,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
 
         setAnimation(holder.itemView, position);
     }
+
 
     private void setAnimation(View itemView, int position) {
         // If the bound view wasn't previously displayed on screen, it's animated
