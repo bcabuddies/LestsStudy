@@ -126,7 +126,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         return position;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         private View mView;
         private ImageView postImageView;
         private TextView descTV;
@@ -134,7 +134,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         private TextView dateTV;
         private CircleImageView prof;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             mView = itemView;
             postImageView = mView.findViewById(R.id.homerow_imageview);
@@ -144,23 +144,23 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             prof = mView.findViewById(R.id.homerow_prof);
         }
 
-        public void setPostImageView(String mUrl) {
+        void setPostImageView(String mUrl) {
             Glide.with(context).load(mUrl).into(postImageView);
         }
 
-        public void descSet(String text) {
+        void descSet(String text) {
             descTV.setText(text);
         }
 
-        public void setNameTV(String name) {
+        void setNameTV(String name) {
             nameTV.setText(name);
         }
 
-        public void setDateTV(StringBuilder timeStamp) {
+        void setDateTV(StringBuilder timeStamp) {
             dateTV.setText(timeStamp);
         }
 
-        public void setProf(String profUrl) {
+        void setProf(String profUrl) {
             Glide.with(context).load(profUrl).into(prof);
         }
     }
