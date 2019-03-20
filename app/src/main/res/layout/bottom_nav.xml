@@ -8,44 +8,46 @@
 
     <ImageView
         android:id="@+id/feed_bNav"
-        android:layout_width="24dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="2.5dp"
+        android:layout_marginBottom="2.5dp"
         android:layout_weight="1"
+        android:tint="#5A5A5A"
         app:srcCompat="@drawable/stack" />
 
     <ImageView
         android:id="@+id/prep_bNav"
-        android:layout_width="24dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="2.5dp"
+        android:layout_marginBottom="2.5dp"
         android:layout_weight="1"
+        android:tint="#5A5A5A"
         app:srcCompat="@drawable/prep" />
 
     <ImageView
         android:id="@+id/test_bNav"
-        android:layout_width="24dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:tint="#000000"
-        android:layout_marginBottom="8dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="2.5dp"
+        android:layout_marginBottom="2.5dp"
         android:layout_weight="1"
+        android:tint="#5A5A5A"
         app:srcCompat="@drawable/test" />
 
     <ImageView
         android:id="@+id/explore_bNav"
-        android:layout_width="24dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="2.5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="2.5dp"
         android:layout_weight="1"
+        android:tint="#5A5A5A"
         app:srcCompat="@drawable/explore" />
 
 </LinearLayout>
