@@ -135,7 +135,8 @@ public class Feed_home extends Fragment implements Feed_homeView {
         //getting user and post data from presenter
         postList = pData;
         userList = uData;
-        Log.e(TAG, "getData: feed_home postlist size"+postList.size() );
+        Log.e(TAG, "getData: feed_home postlist size "+postList.size() );
+        Log.e(TAG, "getData: feed_home userList size "+userList.size() );
         postRecyclerAdapter = new PostRecyclerAdapter(postList, userList);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setReverseLayout(true);

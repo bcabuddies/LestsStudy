@@ -70,23 +70,34 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         final String type = postList.get(position).getType();
         final String user = postList.get(position).getUser();
         final String url = postList.get(position).getUrl();
-        //final String name = userList.get(position).getName();
-        //Log.e(TAG, "onBindViewHolder: name: "+name );
-        //final String userProf = userList.get(position).getProfileURL();
-        Log.e(TAG, "onBindViewHolder: ");
+
+        try {
+            String name = userList.get(position).getName();
+            String userProf = userList.get(position).getProfileURL();
+
+            holder.setNameTV(name);
+            holder.setProf(userProf);
+
+            Log.e(TAG, "onBindViewHolder: profile url "+userProf);
+            Log.e(TAG, "onBindViewHolder: name: "+name );
+        } catch (Exception e) {
+            Log.e(TAG, "onBindViewHolder: name error "+e.getMessage() );
+        }
+
         if (postList.get(position).getUrl() != null) {
             Log.e(TAG, "onBindViewHolder: url null" + position);
             holder.setPostImageView(url);
         }
         holder.descSet(text);
-        /*holder.setNameTV(name);
-        holder.setProf(userProf);
-        */
 
-      /*  @SuppressLint("SimpleDateFormat") SimpleDateFormat dateformatMMDDYYYY = new SimpleDateFormat("dd MMM yy \t HH:mm");
-        final StringBuilder nowMMDDYYYY = new StringBuilder(dateformatMMDDYYYY.format(timestamp));
-        holder.setDateTV(nowMMDDYYYY);*/
-
+        try {
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateformatMMDDYYYY = new SimpleDateFormat("dd MMM yy \t hh:mm a");
+            final StringBuilder nowMMDDYYYY = new StringBuilder(dateformatMMDDYYYY.format(timestamp));
+            holder.setDateTV(nowMMDDYYYY);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "onBindViewHolder: date exception "+e.getMessage() );
+        }
 
         setAnimation(holder.itemView, position);
     }
