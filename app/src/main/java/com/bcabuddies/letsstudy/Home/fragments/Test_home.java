@@ -29,4 +29,8 @@ public class Test_home extends Fragment {
         return inflater.inflate(R.layout.fragment_test_home, container, false);
     }
 
+    public static Fragment newInstance() {
+        Test_home fragment = new Test_home();
+        return fragment;
+    }
 }

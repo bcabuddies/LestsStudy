@@ -28,5 +28,9 @@ public class Notification_home extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_notification_home, container, false);
     }
+    public static Fragment newInstance() {
+        Notification_home fragment = new Notification_home();
+        return fragment;
 
+    }
 }

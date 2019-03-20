@@ -29,4 +29,9 @@ public class Explore_home extends Fragment {
         return inflater.inflate(R.layout.fragment_explore_home, container, false);
     }
 
+    public static Fragment newInstance() {
+        Explore_home fragment = new Explore_home();
+        return fragment;
+    }
+
 }

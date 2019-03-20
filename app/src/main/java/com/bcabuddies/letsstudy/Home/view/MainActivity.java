@@ -74,12 +74,13 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
     private FirebaseFirestore db;
     private Unbinder bind;
     //fragments
-    private Explore_home exploreHomeFrag;
+    private Fragment fragment = null;
+  /*  private Explore_home exploreHomeFrag;
     private Feed_home feedHomeFrag;
     private Prep_home prepHomeFrag;
     private Test_home testHomeFrag;
     private Notification_home notificationFrag;
-
+*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,29 +95,9 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         presenter.attachView(this);
         presenter.user(user);
 
-        initializeFrags();
-    }
-
-    private void initializeFrags() {
-        exploreHomeFrag = new Explore_home();
-        feedHomeFrag = new Feed_home();
-        prepHomeFrag = new Prep_home();
-        testHomeFrag = new Test_home();
-        notificationFrag = new Notification_home();
-
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-        fragmentTransaction.add(R.id.home_frameLayout, exploreHomeFrag);
-        fragmentTransaction.add(R.id.home_frameLayout, feedHomeFrag);
-        fragmentTransaction.add(R.id.home_frameLayout, prepHomeFrag);
-        fragmentTransaction.add(R.id.home_frameLayout, testHomeFrag);
-        fragmentTransaction.add(R.id.home_frameLayout, notificationFrag);
-
-        fragmentTransaction.hide(exploreHomeFrag);
-        fragmentTransaction.hide(prepHomeFrag);
-        fragmentTransaction.hide(testHomeFrag);
-        fragmentTransaction.hide(notificationFrag);
-
+        fragment = Feed_home.newInstance();
+        final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.home_frameLayout, fragment);
         fragmentTransaction.commit();
     }
 
@@ -156,8 +137,8 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         Log.e(TAG, "thirdPartyLoginSuccess: name and profile " + fName + " " + profUrl);
         data.putString("name", fName);
         data.putString("profile", profUrl);
-        data.putString("age",age);
-        data.putString("course",course);
+        data.putString("age", age);
+        data.putString("course", course);
         Utils.setIntentExtra(this, PostRegistration.class, "data", data);
     }
 
@@ -181,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         return true;
     }
 
-    public void fragmentReplace(Fragment fragment) {
+   /* public void fragmentReplace(Fragment fragment) {
         Log.e(TAG, "fragmentReplace: inside fragment replacer");
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
@@ -232,30 +213,34 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
             e.printStackTrace();
             Log.e(TAG, "fragmentReplace: exception in fragReplace " + e.getMessage());
         }
-    }
+    }*/
 
     @OnClick({R.id.feed_bNav, R.id.prep_bNav, R.id.test_bNav, R.id.explore_bNav, R.id.topMenu_topNav, R.id.noti_topNav})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.feed_bNav:
-                fragmentReplace(feedHomeFrag);
+                fragment = Feed_home.newInstance();
                 break;
             case R.id.prep_bNav:
-                fragmentReplace(prepHomeFrag);
+                fragment = Prep_home.newInstance();
                 break;
             case R.id.test_bNav:
-                fragmentReplace(testHomeFrag);
+                fragment = Test_home.newInstance();
                 break;
             case R.id.explore_bNav:
-                fragmentReplace(exploreHomeFrag);
+                fragment = Explore_home.newInstance();
                 break;
             case R.id.noti_topNav:
                 Log.e(TAG, "onViewClicked: noti clicked ");
-                fragmentReplace(notificationFrag);
+                fragment = Notification_home.newInstance();
                 break;
             case R.id.topMenu_topNav:
                 homeDrawerLayout.openDrawer(Gravity.LEFT);
                 break;
         }
+        FragmentTransaction fragmentTransaction2 = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction2.replace(R.id.home_frameLayout, fragment);
+        fragmentTransaction2.commit();
+
     }
 }

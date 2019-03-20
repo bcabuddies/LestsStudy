@@ -29,4 +29,8 @@ public class Prep_home extends Fragment {
         return inflater.inflate(R.layout.fragment_prep_home, container, false);
     }
 
+    public static Fragment newInstance() {
+        Prep_home fragment = new Prep_home();
+        return fragment;
+    }
 }

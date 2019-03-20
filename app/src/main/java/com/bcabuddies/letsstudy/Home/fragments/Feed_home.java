@@ -76,21 +76,20 @@ public class Feed_home extends Fragment implements Feed_homeView {
 
         presenter = new Feed_homePresenterImpl(user, db);
         presenter.attachView(this);
-        presenter.getData();
+
 
 
         //recyclerView
         recyclerViewInit();
+        presenter.getData();
 
         return view;
     }
 
     private void recyclerViewInit() {
+        Log.e(TAG, "recyclerViewInit: " );
         postList = new ArrayList<>();
         userList = new ArrayList<>();
-        postRecyclerAdapter = new PostRecyclerAdapter(postList, userList);
-        feedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        feedRecyclerView.setAdapter(postRecyclerAdapter);
     }
 
     @OnClick({R.id.feed_textSubmitBtn, R.id.feed_photoSubmitBtn})
@@ -136,7 +135,14 @@ public class Feed_home extends Fragment implements Feed_homeView {
         //getting user and post data from presenter
         postList = pData;
         userList = uData;
-        postRecyclerAdapter.notifyDataSetChanged();
+        Log.e(TAG, "getData: feed_home postlist size"+postList.size() );
+        postRecyclerAdapter = new PostRecyclerAdapter(postList, userList);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager.setReverseLayout(true);
+        mLayoutManager.setStackFromEnd(true);
+        feedRecyclerView.setLayoutManager(mLayoutManager);
+        feedRecyclerView.setAdapter(postRecyclerAdapter);
+        //postRecyclerAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -150,5 +156,11 @@ public class Feed_home extends Fragment implements Feed_homeView {
         //no error uploading data
         feedTextLayout.getEditText().setText(null);
         feedTextLayout.getEditText().clearFocus();
+    }
+
+    public static Fragment newInstance() {
+        Feed_home fragment = new Feed_home();
+        return fragment;
+
     }
 }

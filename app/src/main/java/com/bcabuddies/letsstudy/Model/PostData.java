@@ -6,17 +6,6 @@ public class PostData extends com.bcabuddies.letsstudy.Model.PostID {
     private String text, type, url, user;
     private Date timestamp;
 
-    public PostData() {
-    }
-
-    public PostData(String text, String type, String url, String user, Date timestamp) {
-        this.text = text;
-        this.type = type;
-        this.url = url;
-        this.user = user;
-        this.timestamp = timestamp;
-    }
-
     public String getText() {
         return text;
     }
@@ -49,11 +38,23 @@ public class PostData extends com.bcabuddies.letsstudy.Model.PostID {
         this.user = user;
     }
 
-    public Date getTime() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTime(Date timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
+
+    public PostData() {
+    }
+
+    public PostData(String text, String type, String url, String user, Date timestamp) {
+        this.text = text;
+        this.type = type;
+        this.url = url;
+        this.user = user;
+        this.timestamp = timestamp;
+    }
+
 }

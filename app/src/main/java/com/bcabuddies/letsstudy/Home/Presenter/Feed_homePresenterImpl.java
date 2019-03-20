@@ -69,9 +69,8 @@ public class Feed_homePresenterImpl implements Feed_homePresenter {
                         final PostData postData = doc.getDocument().toObject(PostData.class).withID(postID);
                         Log.e(TAG, "getData: post data get");
                         Log.e(TAG, "getData: post data postData user " + postData.getUser());
-
                         postList.add(postData);
-                        Log.e(TAG, "getData: post list data " + postList);
+                        Log.e(TAG, "getData: post list data " + postList.size());
                         //getting the userData
                         final String userID = doc.getDocument().getString("user");
                         getUserData(userID, postData);
@@ -87,7 +86,7 @@ public class Feed_homePresenterImpl implements Feed_homePresenter {
                 final UserData userData = task.getResult().toObject(UserData.class);
                 Log.e(TAG, "getUserData: user data " + userData);
                 userList.add(userData);
-                postList.add(postData);
+                //postList.add(postData);
                 Log.e(TAG, "getUserData: post and user data added ");
                 Log.e(TAG, "getUserData: postList " + postList);
                 Log.e(TAG, "getUserData: userList" + userList);

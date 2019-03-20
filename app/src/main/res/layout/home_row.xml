@@ -86,7 +86,6 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
-                android:src="@drawable/com_facebook_profile_picture_blank_portrait"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/homerow_descTV" />
@@ -97,7 +96,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="0.5"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/homerow_imageview"
                 app:layout_constraintWidth_default="percent"
@@ -106,6 +107,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
                     android:padding="5dp">
 
 
@@ -138,6 +140,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
                 app:layout_constraintLeft_toRightOf="@id/homerow_likecard"
                 app:layout_constraintTop_toBottomOf="@id/homerow_imageview"
                 app:layout_constraintWidth_default="percent"
@@ -147,7 +150,9 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="5dp">
+                    android:padding="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp">
 
 
                     <ImageView
