@@ -2,7 +2,9 @@ package com.bcabuddies.letsstudy.Registration.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.Registration.Presenter.RegisterPresenterImpl;
@@ -27,6 +29,8 @@ public class Registration extends AppCompatActivity implements RegisterView {
     @BindView(R.id.register_registerBtn)
 
     Button registerRegisterBtn;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
     private FirebaseAuth auth;
     private RegisterPresenterImpl presenter;
 
@@ -44,6 +48,7 @@ public class Registration extends AppCompatActivity implements RegisterView {
 
     @OnClick(R.id.register_registerBtn)
     public void onViewClicked() {
+        progressBar.setVisibility(View.VISIBLE);
         presenter.signUp(
                 registerEmailLayout.getEditText().getText().toString().trim().toLowerCase(),
                 registerPassLayout.getEditText().getText().toString(),
@@ -52,17 +57,20 @@ public class Registration extends AppCompatActivity implements RegisterView {
 
     @Override
     public void showValidationError() {
+        progressBar.setVisibility(View.GONE);
         Utils.showMessage(this, "Please fill the details carefully");
     }
 
     @Override
     public void signUpSuccess() {
+        progressBar.setVisibility(View.GONE);
         Utils.showMessage(this, "Welcome");
         Utils.setIntent(this, PostRegistration.class);
     }
 
     @Override
     public void signUpError(String message) {
+        progressBar.setVisibility(View.GONE);
         Utils.showMessage(this, "sign up error : " + message);
     }
 

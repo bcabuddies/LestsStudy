@@ -10,6 +10,7 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bcabuddies.letsstudy.Home.view.MainActivity;
@@ -32,7 +33,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
@@ -43,7 +43,6 @@ import org.json.JSONException;
 
 import java.util.Arrays;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,6 +64,8 @@ public class Login extends AppCompatActivity implements LoginView {
     TextView loginRegistrationTV;
     @BindView(R.id.login_loginBtn)
     Button loginLoginBtn;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
 
     private String fNname, profUrl;
     private CallbackManager mCallbackManager;
@@ -105,13 +106,12 @@ public class Login extends AppCompatActivity implements LoginView {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
 
 
     }
-    
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -145,6 +145,7 @@ public class Login extends AppCompatActivity implements LoginView {
     }
 
     private void FacebookLogin() {
+        progressBar.setVisibility(View.VISIBLE);
         LoginManager.getInstance().logInWithReadPermissions(Login.this, Arrays.asList("email", "public_profile"));
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -162,6 +163,7 @@ public class Login extends AppCompatActivity implements LoginView {
                         profUrl = "http://graph.facebook.com/" + id + "/picture?height=480&width=480";
                         Log.e("facebookRet", "name: " + fNname);
                         Log.e("facebookRet", "\n prof: " + profUrl);
+                        progressBar.setVisibility(View.GONE);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -172,18 +174,21 @@ public class Login extends AppCompatActivity implements LoginView {
             @Override
             public void onCancel() {
                 Log.d("facebooktest", "facebook:onCancel");
+                progressBar.setVisibility(View.GONE);
                 // ...
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.d("facebooktest", "facebook:onError", error);
+                progressBar.setVisibility(View.GONE);
                 // ...
             }
         });
     }
 
     private void SignIn() {
+        progressBar.setVisibility(View.VISIBLE);
         String email_text = loginEmailLayout.getEditText().getText().toString();
         String password_text = loginPassLayout.getEditText().getText().toString();
         loginPresenter.login(email_text, password_text);
@@ -209,6 +214,7 @@ public class Login extends AppCompatActivity implements LoginView {
                 Log.e("googleRet", "name: " + fNname);
                 Log.e("googleRet", "pofile: " + profUrl);
                 Log.v("mGoogleSignIn", "Google sign in try");
+                progressBar.setVisibility(View.GONE);
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.v("mGoogleSignIn", "Google sign in failed", e);
@@ -216,6 +222,7 @@ public class Login extends AppCompatActivity implements LoginView {
             }
         } else {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
+            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -230,6 +237,7 @@ public class Login extends AppCompatActivity implements LoginView {
     }
 
     private void GoogleLogin() {
+        progressBar.setVisibility(View.VISIBLE);
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -257,6 +265,7 @@ public class Login extends AppCompatActivity implements LoginView {
 
     @Override
     public void loginSuccess() {
+        progressBar.setVisibility(View.GONE);
         Utils.showMessage(this, "Login Success!");
         loginLoginBtn.setEnabled(true);
         Utils.setIntent(this, MainActivity.class);
@@ -264,6 +273,7 @@ public class Login extends AppCompatActivity implements LoginView {
 
     @Override
     public void thirdPartyLoginSuccess() {
+        progressBar.setVisibility(View.GONE);
         Utils.showMessage(this, "Login Success!");
         Bundle data = new Bundle();
         Log.e(TAG, "thirdPartyLoginSuccess: name and profile " + fNname + " " + profUrl);
@@ -274,6 +284,7 @@ public class Login extends AppCompatActivity implements LoginView {
 
     @Override
     public void loginError(String error) {
+        progressBar.setVisibility(View.GONE);
         Utils.showMessage(this, "Login error " + error);
     }
 

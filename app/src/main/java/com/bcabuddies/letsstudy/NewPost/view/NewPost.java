@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bcabuddies.letsstudy.Home.view.MainActivity;
@@ -54,6 +55,9 @@ public class NewPost extends AppCompatActivity implements NewPostView {
     ImageView topMenuTopNav;
     @BindView(R.id.noti_topNav)
     ImageView notiTopNav;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+
     private NewPostPresenter presenter;
     private Bundle b = new Bundle();
     private Bitmap thumb_bitmap;
@@ -116,6 +120,7 @@ public class NewPost extends AppCompatActivity implements NewPostView {
             Log.e(TAG, "uploadPost: thumb_byte length " + thumb_byte.length);
             Utils.showMessage(this, "Please select a photo and fill the description");
         } else {
+            progressBar.setVisibility(View.VISIBLE);
             Log.e(TAG, "uploadPost: thumb_byte length " + thumb_byte.length);
             presenter.imagePost(thumb_byte, text);
         }
@@ -123,11 +128,13 @@ public class NewPost extends AppCompatActivity implements NewPostView {
 
     @Override
     public void errorUpload(String error) {
+        progressBar.setVisibility(View.GONE);
         Utils.showMessage(this, error);
     }
 
     @Override
     public void uploadSuccess() {
+        progressBar.setVisibility(View.GONE);
         Utils.showMessage(this, "Upload Success");
         Utils.setIntent(this, MainActivity.class);
     }

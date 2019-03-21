@@ -7,6 +7,15 @@
     android:background="@drawable/forgotpass_back"
     tools:context=".Registration.view.PostRegistration">
 
+    <include
+        layout="@layout/progress_bar"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/post_reg_profileView"

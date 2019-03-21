@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bcabuddies.letsstudy.Home.view.MainActivity;
@@ -59,6 +60,10 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     TextInputEditText postRegInPursuing;
     @BindView(R.id.post_reg_chageprof)
     ImageView postRegChageprof;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+    @BindView(R.id.post_reg_inPursuing_layout)
+    TextInputLayout postRegInPursuingLayout;
 
     private FirebaseUser user;
     private FirebaseAuth auth;
@@ -71,8 +76,6 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     private Bitmap thumb_Bitmap = null;
     private Uri mainImageUri = null;
     private StorageReference thumbImgRef;
-    //public Uri thumb_downloadUrl = null;
-    // private Task<Uri> getDownloadUri;
     private byte[] thumb_byte;
 
 
@@ -83,6 +86,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         ButterKnife.bind(this);
 
         try {
+            progressBar.setVisibility(View.VISIBLE);
             fName = this.getIntent().getBundleExtra("data").getString("name");
             profile = this.getIntent().getBundleExtra("data").getString("profile");
             preData(fName, profile);
@@ -90,13 +94,14 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
                 String age = this.getIntent().getBundleExtra("data").getString("age");
                 String course = this.getIntent().getBundleExtra("data").getString("course");
                 preSettingsData(age, course);
-
+                progressBar.setVisibility(View.GONE);
             } catch (Exception e) {
                 e.printStackTrace();
+                progressBar.setVisibility(View.GONE);
             }
-            //  b = this.getIntent().getBundleExtra("data");
         } catch (Exception e) {
             e.printStackTrace();
+            progressBar.setVisibility(View.GONE);
         }
 
         if (profile == null) {
@@ -107,15 +112,6 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
 
         menuInitiated();
 
-     /*   try {
-           // String name =this.getIntent().getBundleExtra("data").getString("name");
-           // profile = b.getString("profile");
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-
         FirebaseApp.initializeApp(this);
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -124,23 +120,24 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         presenter = new PostRegistrationPresenterImpl(firebaseFirestore, user, thumbImgRef);
         presenter.attachView(this);
         presenter.getMenu();
-        //presenter.firebaseDataPre();
-
     }
 
     private void updateLabel() {
+        progressBar.setVisibility(View.GONE);
         String myFormat = "MM/dd/yy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         postRegAgeLayout.getEditText().setText(sdf.format(myCalendar.getTime()));
     }
 
     private void preData(String name, String profile) {
+        progressBar.setVisibility(View.GONE);
         postRegNameLayout.getEditText().setText(name);
         Glide.with(this).load(profile)
                 .into(postRegProfileView);
     }
 
     private void preSettingsData(String age, String course) {
+        progressBar.setVisibility(View.GONE);
         postRegAgeLayout.getEditText().setText(age);
         postRegInPursuing.setText(course);
     }
@@ -158,11 +155,13 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
 
     @Override
     public void showValidationError() {
+        progressBar.setVisibility(View.GONE);
         Utils.showMessage(this, "Please write your name");
     }
 
     @Override
     public void detailUploadSuccess() {
+        progressBar.setVisibility(View.GONE);
         Utils.showMessage(this, "Welcome " + postRegNameLayout.getEditText().getText().toString());
         Utils.setIntent(this, MainActivity.class);
         finish();
@@ -170,6 +169,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
 
     @Override
     public void detailsUploadError(String message) {
+        progressBar.setVisibility(View.GONE);
         Utils.showMessage(this, "Error : " + message);
     }
 
@@ -215,17 +215,22 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
                 popup.show(); //showing popup menu
                 break;
             case R.id.button:
-                presenter.uploadData(
-                        postRegNameLayout.getEditText().getText().toString(),
-                        postRegAgeLayout.getEditText().getText().toString(),
-                        profile,
-                        postRegInPursuing.getText().toString()
-                );
+                uploadData();
                 break;
             case R.id.post_reg_chageprof:
                 imagePicker();
                 break;
         }
+    }
+
+    private void uploadData() {
+        progressBar.setVisibility(View.VISIBLE);
+        presenter.uploadData(
+                postRegNameLayout.getEditText().getText().toString(),
+                postRegAgeLayout.getEditText().getText().toString(),
+                profile,
+                postRegInPursuing.getText().toString()
+        );
     }
 
     private void imagePicker() {

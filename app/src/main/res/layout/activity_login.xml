@@ -7,6 +7,16 @@
     android:background="@drawable/home_back"
     tools:context=".Login.view.Login">
 
+    <include
+        layout="@layout/progress_bar"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
+
     <View
         android:id="@+id/login_background"
         android:layout_width="0dp"
