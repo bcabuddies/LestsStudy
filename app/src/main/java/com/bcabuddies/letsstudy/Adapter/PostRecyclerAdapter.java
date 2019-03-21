@@ -10,17 +10,13 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bcabuddies.letsstudy.Model.PostData;
 import com.bcabuddies.letsstudy.Model.UserData;
 import com.bcabuddies.letsstudy.R;
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -34,7 +30,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapter.ViewHolder> {
 
     private ArrayList<PostData> postList;
-    private ArrayList<UserData> userList;
 
     public static Context context;
     private static final String TAG = "PostRecAdapter";
@@ -43,9 +38,8 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
     // Allows to remember the last item shown on screen
     private int lastPosition = -1;
 
-    public PostRecyclerAdapter(ArrayList<PostData> postList, ArrayList<UserData> userList) {
+    public PostRecyclerAdapter(ArrayList<PostData> postList) {
         this.postList = postList;
-        this.userList = userList;
         Log.e(TAG, "PostRecyclerAdapter: postlist size " + this.postList.size());
     }
 
@@ -74,38 +68,21 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         final String type = postList.get(position).getType();
         final String postUserId = postList.get(position).getUser();
         final String url = postList.get(position).getUrl();
-/*
-        try {
-            String name = userList.get(position).getName();
-            String userProf = userList.get(position).getProfileURL();
-
-            holder.setNameTV(name);
-            holder.setProf(userProf);
-
-            Log.e(TAG, "onBindViewHolder: profile url "+userProf);
-            Log.e(TAG, "onBindViewHolder: name: "+name );
-        } catch (Exception e) {
-            Log.e(TAG, "onBindViewHolder: name error "+e.getMessage() );
-        }*/
 
         if (postList.get(position).getUrl() != null) {
-            Log.e(TAG, "onBindViewHolder: url null" + position);
+            Log.e(TAG, "onBindViewHolder: url " + position);
             holder.setPostImageView(url);
         }
 
         //this will retrieve user data at for each position
-        firebaseFirestore.collection("Users").document(postUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-           if (task.isSuccessful()){
-               String fName=task.getResult().getString("name");
-               String profUrl=task.getResult().getString("profileURL");
-               holder.setNameTV(fName);
-               holder.setProf(profUrl);
-           }
-           else {
-               Log.e(TAG, "onComplete: error" );
-           }
+        firebaseFirestore.collection("Users").document(postUserId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                String fName = task.getResult().getString("name");
+                String profUrl = task.getResult().getString("profileURL");
+                holder.setNameTV(fName);
+                holder.setProf(profUrl);
+            } else {
+                Log.e(TAG, "onComplete: error");
             }
         });
 
@@ -117,7 +94,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             holder.setDateTV(nowMMDDYYYY);
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e(TAG, "onBindViewHolder: date exception "+e.getMessage() );
+            Log.e(TAG, "onBindViewHolder: date exception " + e.getMessage());
         }
 
         setAnimation(holder.itemView, position);

@@ -55,7 +55,6 @@ public class Feed_home extends Fragment implements Feed_homeView {
     private FirebaseUser user;
     private PostRecyclerAdapter postRecyclerAdapter;
     private ArrayList<PostData> postList;
-    private ArrayList<UserData> userList;
 
     public Feed_home() {
         // Required empty public constructor
@@ -89,7 +88,6 @@ public class Feed_home extends Fragment implements Feed_homeView {
     private void recyclerViewInit() {
         Log.e(TAG, "recyclerViewInit: " );
         postList = new ArrayList<>();
-        userList = new ArrayList<>();
     }
 
     @OnClick({R.id.feed_textSubmitBtn, R.id.feed_photoSubmitBtn})
@@ -131,13 +129,11 @@ public class Feed_home extends Fragment implements Feed_homeView {
     }
 
     @Override
-    public void getData(ArrayList<PostData> pData, ArrayList<UserData> uData) {
+    public void getData(ArrayList<PostData> pData) {
         //getting user and post data from presenter
         postList = pData;
-        userList = uData;
         Log.e(TAG, "getData: feed_home postlist size "+postList.size() );
-        Log.e(TAG, "getData: feed_home userList size "+userList.size() );
-        postRecyclerAdapter = new PostRecyclerAdapter(postList, userList);
+        postRecyclerAdapter = new PostRecyclerAdapter(postList);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setReverseLayout(true);
         mLayoutManager.setStackFromEnd(true);

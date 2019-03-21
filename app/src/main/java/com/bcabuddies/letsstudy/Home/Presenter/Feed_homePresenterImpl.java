@@ -71,30 +71,11 @@ public class Feed_homePresenterImpl implements Feed_homePresenter {
                         Log.e(TAG, "getData: post data postData user " + postData.getUser());
                         postList.add(postData);
                         Log.e(TAG, "getData: post list data " + postList.size());
-                        //getting the userData
-                        final String userID = doc.getDocument().getString("user");
-                        getUserData(userID, postData);
+
+                        //send data to View;
+                        homeView.getData(postList);
                     }
                 }
-            }
-        });
-    }
-
-    private void getUserData(String userID, PostData postData) {
-        db.collection("Users").document(userID).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                final UserData userData = task.getResult().toObject(UserData.class);
-                Log.e(TAG, "getUserData: user data " + userData);
-                userList.add(userData);
-                //postList.add(postData);
-                Log.e(TAG, "getUserData: post and user data added ");
-                Log.e(TAG, "getUserData: postList " + postList);
-                Log.e(TAG, "getUserData: userList" + userList);
-
-                //send data to View;
-                homeView.getData(postList, userList);
-            } else {
-                homeView.uploadTextError(task.getException().getMessage());
             }
         });
     }
