@@ -14,8 +14,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
 
 import androidx.annotation.NonNull;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 //this class will handle and do all the work related to the data and all
 public class LoginPresenterImpl implements LoginPresenter {
@@ -48,6 +54,36 @@ public class LoginPresenterImpl implements LoginPresenter {
         }
     }
 
+    //points
+    @Override
+    public void pointsCheck(){
+        try {
+            FirebaseFirestore db=FirebaseFirestore.getInstance();
+            String uid=auth.getCurrentUser().getUid();
+            db.collection("Users").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (!task.getResult().exists()){
+                        HashMap<String,Object> map=new HashMap<>();
+                        map.put("value","100");
+                        db.collection("Points").document(uid).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    Log.e(TAG, "onComplete: points successfully uploaded" );
+                                }
+                            }
+                        });
+                    }
+                    else    {
+                        Log.e(TAG, "onComplete: points user already exist" );
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     //google signIn
     public void firebaseAuthWithGoogle(GoogleSignInAccount account) {
@@ -66,6 +102,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                     }
                 } else {
                     loginView.thirdPartyLoginSuccess();
+                    pointsCheck();
                 }
             }
         });

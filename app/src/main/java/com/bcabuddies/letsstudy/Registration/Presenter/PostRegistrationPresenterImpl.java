@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.bcabuddies.letsstudy.Registration.view.PostRegistrationView;
+import com.bcabuddies.letsstudy.utils.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,21 +35,21 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
 
     @Override
     public void uploadData(String name, String age, String profileUri, String pursuing) {
-        if (name.isEmpty()) {
+        if (name.isEmpty()) {                                                       //if full name is empty
             postRegView.showValidationError();
             Log.e(TAG, "uploadData: if");
-        } else if (thumb_downloadUrl == null) {
+        } else if (thumb_downloadUrl == null) {                                     //if user did not sign in using google or facebook
             Log.e(TAG, "uploadData: else if");
-            if (!(profileUri == null)) {
+            if (!(profileUri == null)) {                                            //if user did not upload custom image
                 thumb_downloadUrl = thumb_downloadUrl.parse(profileUri);
                 Log.e(TAG, "uploadData: else if- if" + profileUri);
                 detailsUpload(name, age, profileUri, pursuing, thumb_downloadUrl);
-            } else {
+            } else {                                                                  //if there is no profile pic at the end
                 Log.e(TAG, "uploadData: else if- else" + thumb_downloadUrl);
                 thumb_downloadUrl = thumb_downloadUrl.parse("https://firebasestorage.googleapis.com/v0/b/fitsteps-311ed.appspot.com/o/default_user_thumb%2Fdefault.png?alt=media&token=c2de219c-9430-48bf-84c1-b2ba0b37be66");
                 detailsUpload(name, age, profileUri, pursuing, thumb_downloadUrl);
             }
-        } else {
+        } else {                                                                    //if user sing in using google or fb
             detailsUpload(name, age, profileUri, pursuing, thumb_downloadUrl);
         }
     }

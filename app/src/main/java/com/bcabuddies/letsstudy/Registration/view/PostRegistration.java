@@ -231,6 +231,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
                 profile,
                 postRegInPursuing.getText().toString()
         );
+        progressBar.setVisibility(View.GONE);
     }
 
     private void imagePicker() {
