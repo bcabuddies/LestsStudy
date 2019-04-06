@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
     String TAG = "MainActivity.class";
 
     CircleImageView homeUserProfileView;
-    TextView homeUserNameText;
+    TextView homeUserNameText, homeUserStudyPointText;
 
     @BindView(R.id.home_nav)
     NavigationView homeNav;
@@ -75,12 +75,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
     private Unbinder bind;
     //fragments
     private Fragment fragment = null;
-  /*  private Explore_home exploreHomeFrag;
-    private Feed_home feedHomeFrag;
-    private Prep_home prepHomeFrag;
-    private Test_home testHomeFrag;
-    private Notification_home notificationFrag;
-*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,23 +120,28 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         //User data receive here
         homeUserProfileView = findViewById(R.id.home_user_profileView);
         homeUserNameText = findViewById(R.id.home_user_nameText);
+        homeUserStudyPointText = findViewById(R.id.home_user_studyPointText);
+
         String name = user.getString("name");
         String profileURL = user.getString("profile");
+        int points = user.getInt("points");
+
         homeUserNameText.setText(name);
+        homeUserStudyPointText.setText(points);
         Glide.with(this).load(profileURL).into(homeUserProfileView);
     }
 
     @Override
-    public void firebaseData(String profUrl, String fName, String age, String course) {
+    public void firebaseData(String profUrl, String fName, String age, String course, int points) {
         Bundle data = new Bundle();
         Log.e(TAG, "thirdPartyLoginSuccess: name and profile " + fName + " " + profUrl);
         data.putString("name", fName);
         data.putString("profile", profUrl);
         data.putString("age", age);
         data.putString("course", course);
+        data.putInt("points", points);
         Utils.setIntentExtra(this, PostRegistration.class, "data", data);
     }
-
 
     @Override
     public Context getContext() {
@@ -161,59 +161,6 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         }
         return true;
     }
-
-   /* public void fragmentReplace(Fragment fragment) {
-        Log.e(TAG, "fragmentReplace: inside fragment replacer");
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-        if (fragment == feedHomeFrag) {
-            Log.e(TAG, "fragmentReplace: feed");
-            fragmentTransaction.show(feedHomeFrag);
-            fragmentTransaction.hide(prepHomeFrag);
-            fragmentTransaction.hide(testHomeFrag);
-            fragmentTransaction.hide(exploreHomeFrag);
-            fragmentTransaction.hide(notificationFrag);
-        }
-        if (fragment == prepHomeFrag) {
-            Log.e(TAG, "fragmentReplace: prep");
-            fragmentTransaction.show(prepHomeFrag);
-            fragmentTransaction.hide(feedHomeFrag);
-            fragmentTransaction.hide(testHomeFrag);
-            fragmentTransaction.hide(exploreHomeFrag);
-            fragmentTransaction.hide(notificationFrag);
-        }
-        if (fragment == testHomeFrag) {
-            Log.e(TAG, "fragmentReplace: test");
-            fragmentTransaction.show(testHomeFrag);
-            fragmentTransaction.hide(prepHomeFrag);
-            fragmentTransaction.hide(feedHomeFrag);
-            fragmentTransaction.hide(exploreHomeFrag);
-            fragmentTransaction.hide(notificationFrag);
-        }
-        if (fragment == exploreHomeFrag) {
-            Log.e(TAG, "fragmentReplace: explore");
-            fragmentTransaction.show(exploreHomeFrag);
-            fragmentTransaction.hide(prepHomeFrag);
-            fragmentTransaction.hide(testHomeFrag);
-            fragmentTransaction.hide(feedHomeFrag);
-            fragmentTransaction.hide(notificationFrag);
-        }
-        if (fragment == notificationFrag) {
-            Log.e(TAG, "fragmentReplace: notification");
-            fragmentTransaction.show(notificationFrag);
-            fragmentTransaction.hide(prepHomeFrag);
-            fragmentTransaction.hide(testHomeFrag);
-            fragmentTransaction.hide(exploreHomeFrag);
-            fragmentTransaction.hide(feedHomeFrag);
-        }
-        try {
-            fragmentTransaction.show(fragment);
-            fragmentTransaction.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, "fragmentReplace: exception in fragReplace " + e.getMessage());
-        }
-    }*/
 
     @OnClick({R.id.feed_bNav, R.id.prep_bNav, R.id.test_bNav, R.id.explore_bNav, R.id.topMenu_topNav, R.id.noti_topNav})
     public void onViewClicked(View view) {

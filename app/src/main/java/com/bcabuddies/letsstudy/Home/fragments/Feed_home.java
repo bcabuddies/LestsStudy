@@ -60,7 +60,6 @@ public class Feed_home extends Fragment implements Feed_homeView {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -70,13 +69,11 @@ public class Feed_home extends Fragment implements Feed_homeView {
         ButterKnife.bind(this, view);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
-        ;
+
         db = FirebaseFirestore.getInstance();
 
         presenter = new Feed_homePresenterImpl(user, db);
         presenter.attachView(this);
-
-
 
         //recyclerView
         recyclerViewInit();

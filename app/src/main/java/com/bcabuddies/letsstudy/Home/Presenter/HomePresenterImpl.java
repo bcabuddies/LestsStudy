@@ -11,6 +11,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+import java.util.Objects;
+
 import androidx.annotation.NonNull;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
@@ -46,24 +49,44 @@ public class HomePresenterImpl implements HomePresenter {
     }
 
     public void firebaseDataPre() {
-        firebaseFirestore.collection("Users").document(auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.getResult().exists()) {
-                    String profUrl;
-                    profUrl = task.getResult().getString("profileURL");
-                    if (profUrl == null) {
-                        //  profUrl = "https://firebasestorage.googleapis.com/v0/b/letsstudy-c77c3.appspot.com/o/user_defalut_profile%2Fdefault.png?alt=media&token=027c4d7f-8452-4ff9-a4c7-263b77254bd0";
-                        profUrl = "";
-                    }
-                    String name = task.getResult().getString("name");
-                    String courseName = task.getResult().getString("pursuing");
-                    String age = task.getResult().getString("age");
-                    Log.e(TAG, "onComplete: firebasepredata: proff " + profUrl);
-                    Log.e(TAG, "onComplete: firebasedatapre : " + name + "    " + profUrl + "    " + courseName);
-                    homeView.firebaseData(profUrl,name,age,courseName);
-                } else {
-                    Log.e(TAG, "onComplete: firebasepredata: no data");
+        //checking points
+        points();
+
+        firebaseFirestore.collection("Users").document(auth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+            if (task.getResult().exists()) {
+                String profUrl;
+                profUrl = task.getResult().getString("profileURL");
+                if (profUrl == null) {
+                    //  profUrl = "https://firebasestorage.googleapis.com/v0/b/letsstudy-c77c3.appspot.com/o/user_defalut_profile%2Fdefault.png?alt=media&token=027c4d7f-8452-4ff9-a4c7-263b77254bd0";
+                    profUrl = "";
+                }
+                String name = task.getResult().getString("name");
+                String courseName = task.getResult().getString("pursuing");
+                String age = task.getResult().getString("age");
+                int points = Integer.parseInt(Objects.requireNonNull(task.getResult().getString("points")));
+                Log.e(TAG, "onComplete: firebasepredata: proff " + profUrl);
+                Log.e(TAG, "onComplete: firebasedatapre : " + name + "    " + profUrl + "    " + courseName);
+                homeView.firebaseData(profUrl,name,age,courseName,points);
+            } else {
+                Log.e(TAG, "onComplete: firebasepredata: no data");
+            }
+        });
+    }
+
+    private void points() {
+        firebaseFirestore.collection("Users").document(auth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
+            if (task.getResult().exists()){
+                String points = task.getResult().getString("points");
+                if (points.isEmpty()){
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("points", 100);
+                    firebaseFirestore.collection("Users").document(auth.getCurrentUser().getUid()).update(map).addOnCompleteListener(task1 -> {
+                        if (task.isSuccessful()){
+                            Log.e(TAG, "points: 100 points added ");
+                        } else {
+                            Log.e(TAG, "points: error adding 100 points");
+                        }
+                    });
                 }
             }
         });

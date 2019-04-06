@@ -54,56 +54,21 @@ public class LoginPresenterImpl implements LoginPresenter {
         }
     }
 
-    //points
-    @Override
-    public void pointsCheck(){
-        try {
-            FirebaseFirestore db=FirebaseFirestore.getInstance();
-            String uid=auth.getCurrentUser().getUid();
-            db.collection("Users").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (!task.getResult().exists()){
-                        HashMap<String,Object> map=new HashMap<>();
-                        map.put("value","100");
-                        db.collection("Points").document(uid).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
-                                    Log.e(TAG, "onComplete: points successfully uploaded" );
-                                }
-                            }
-                        });
-                    }
-                    else    {
-                        Log.e(TAG, "onComplete: points user already exist" );
-                    }
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     //google signIn
     public void firebaseAuthWithGoogle(GoogleSignInAccount account) {
 
         Log.v("mGoogleSignIn", "firebaseAuthWithGoogle: " + account.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-        auth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!task.isSuccessful()) {
-                    try {
-                        loginView.loginError(task.getException().getMessage());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    loginView.thirdPartyLoginSuccess();
-                    pointsCheck();
+        auth.signInWithCredential(credential).addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                try {
+                    loginView.loginError(task.getException().getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else {
+                loginView.thirdPartyLoginSuccess();
             }
         });
 
@@ -116,22 +81,19 @@ public class LoginPresenterImpl implements LoginPresenter {
         Log.v("facebooktest", "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        auth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!task.isSuccessful()) {
-                    try {
-                        Log.e("facebooktest", "error: " + task.getException().getMessage());
-                        LoginManager.getInstance().logOut();
-                        loginView.loginError(task.getException().getMessage());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e("facebooktest", "onComplete: " + e.getMessage());
-                    }
-                } else {
-                    loginView.thirdPartyLoginSuccess();
-                    Log.e("facebooktest", "onComplete: success ");
+        auth.signInWithCredential(credential).addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                try {
+                    Log.e("facebooktest", "error: " + task.getException().getMessage());
+                    LoginManager.getInstance().logOut();
+                    loginView.loginError(task.getException().getMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("facebooktest", "onComplete: " + e.getMessage());
                 }
+            } else {
+                loginView.thirdPartyLoginSuccess();
+                Log.e("facebooktest", "onComplete: success ");
             }
         });
     }

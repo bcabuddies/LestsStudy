@@ -14,5 +14,4 @@ public interface LoginPresenter extends BasePresenter<LoginView> {
     void handleFacebookAccessToken(AccessToken token);
 
     void checkLogin();
-    void pointsCheck();
 }
