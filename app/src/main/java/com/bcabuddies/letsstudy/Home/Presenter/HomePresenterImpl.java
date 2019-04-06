@@ -37,6 +37,7 @@ public class HomePresenterImpl implements HomePresenter {
                 Bundle data = new Bundle();
                 data.putString("name",task.getResult().getString("name"));
                 data.putString("profile",task.getResult().getString("profileURL"));
+                data.putLong("points", (Long) task.getResult().get("points"));
                 homeView.getUserDetails(data);
             } else {
                 try {
@@ -49,9 +50,6 @@ public class HomePresenterImpl implements HomePresenter {
     }
 
     public void firebaseDataPre() {
-        //checking points
-        points();
-
         firebaseFirestore.collection("Users").document(auth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
             if (task.getResult().exists()) {
                 String profUrl;
@@ -63,31 +61,12 @@ public class HomePresenterImpl implements HomePresenter {
                 String name = task.getResult().getString("name");
                 String courseName = task.getResult().getString("pursuing");
                 String age = task.getResult().getString("age");
-                int points = Integer.parseInt(Objects.requireNonNull(task.getResult().getString("points")));
+                Long points = (Long)task.getResult().get("points");
                 Log.e(TAG, "onComplete: firebasepredata: proff " + profUrl);
                 Log.e(TAG, "onComplete: firebasedatapre : " + name + "    " + profUrl + "    " + courseName);
                 homeView.firebaseData(profUrl,name,age,courseName,points);
             } else {
                 Log.e(TAG, "onComplete: firebasepredata: no data");
-            }
-        });
-    }
-
-    private void points() {
-        firebaseFirestore.collection("Users").document(auth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
-            if (task.getResult().exists()){
-                String points = task.getResult().getString("points");
-                if (points.isEmpty()){
-                    HashMap<String, Object> map = new HashMap<>();
-                    map.put("points", 100);
-                    firebaseFirestore.collection("Users").document(auth.getCurrentUser().getUid()).update(map).addOnCompleteListener(task1 -> {
-                        if (task.isSuccessful()){
-                            Log.e(TAG, "points: 100 points added ");
-                        } else {
-                            Log.e(TAG, "points: error adding 100 points");
-                        }
-                    });
-                }
             }
         });
     }

@@ -124,22 +124,22 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
 
         String name = user.getString("name");
         String profileURL = user.getString("profile");
-        int points = user.getInt("points");
+        long points = user.getLong("points");
 
         homeUserNameText.setText(name);
-        homeUserStudyPointText.setText(points);
+        homeUserStudyPointText.setText(""+points);
         Glide.with(this).load(profileURL).into(homeUserProfileView);
     }
 
     @Override
-    public void firebaseData(String profUrl, String fName, String age, String course, int points) {
+    public void firebaseData(String profUrl, String fName, String age, String course, long points) {
         Bundle data = new Bundle();
         Log.e(TAG, "thirdPartyLoginSuccess: name and profile " + fName + " " + profUrl);
         data.putString("name", fName);
         data.putString("profile", profUrl);
         data.putString("age", age);
         data.putString("course", course);
-        data.putInt("points", points);
+        data.putLong("points", points);
         Utils.setIntentExtra(this, PostRegistration.class, "data", data);
     }
 
@@ -188,6 +188,5 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         FragmentTransaction fragmentTransaction2 = getSupportFragmentManager().beginTransaction();
         fragmentTransaction2.replace(R.id.home_frameLayout, fragment);
         fragmentTransaction2.commit();
-
     }
 }

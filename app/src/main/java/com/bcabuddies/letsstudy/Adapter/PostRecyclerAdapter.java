@@ -12,11 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bcabuddies.letsstudy.Model.PostData;
-import com.bcabuddies.letsstudy.Model.UserData;
 import com.bcabuddies.letsstudy.R;
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
@@ -103,31 +100,45 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         }
         setAnimation(holder.itemView, position);
 
-        holder.likeCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HashMap<String,Object> map=new HashMap<>();
-                map.put("time_stamp",FieldValue.serverTimestamp());
-                map.put("uid",current_user.toString());
-                try {
-                    firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()){
-                                holder.likeTV.setVisibility(GONE);
-                                holder.likeIcon.setVisibility(GONE);
-                                holder.likedIcon.setVisibility(View.VISIBLE);
-                                holder.likedTV.setVisibility(View.VISIBLE);
-                                Log.e(TAG, "onComplete: like by"+current_user.toString() );
+        holder.likeCard.setOnClickListener(v -> {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("time_stamp", FieldValue.serverTimestamp());
+            map.put("uid", current_user);
+            try {
+                firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).set(map).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        holder.likeTV.setVisibility(GONE);
+                        holder.likeIcon.setVisibility(GONE);
+                        holder.likedIcon.setVisibility(View.VISIBLE);
+                        holder.likedTV.setVisibility(View.VISIBLE);
+                        Log.e(TAG, "onComplete: like by" + current_user);
+
+                        //adding points
+                        firebaseFirestore.collection("Users").document(postUserId).get().addOnCompleteListener(task1 -> {
+                            if (task1.getResult().exists()){
+                                long points = (long) task1.getResult().get("points");
+                                Log.e(TAG, "onBindViewHolder: points before adding 10 "+points );
+                                points = points + 10;
+                                Log.e(TAG, "onBindViewHolder: points after adding 10 "+points );
+
+                                HashMap<String, Object> data = new HashMap<>();
+                                data.put("points", points);
+
+                                firebaseFirestore.collection("Users").document(postUserId).update(data).addOnCompleteListener(task2 -> {
+                                    if (task2.isSuccessful()){
+                                        Log.e(TAG, "onBindViewHolder: points added " );
+                                    } else {
+                                        Log.e(TAG, "onBindViewHolder: points not added error "+task2.getException().getMessage() );
+                                    }
+                                });
                             }
-                            else{
-                                Log.e(TAG, "onComplete: like failed");
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                        });
+                    } else {
+                        Log.e(TAG, "onComplete: like failed");
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
@@ -177,12 +188,12 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             descTV = mView.findViewById(R.id.homerow_descTV);
             nameTV = mView.findViewById(R.id.homerow_nameTV);
             dateTV = mView.findViewById(R.id.homerow_dateTV);
-            likeTV=mView.findViewById(R.id.homerow_likeTV);
-            likedTV=mView.findViewById(R.id.homerow_likedTV);
-            likeIcon=mView.findViewById(R.id.homerow_likeIcon);
-            likedIcon=mView.findViewById(R.id.homerow_likedIcon);
+            likeTV = mView.findViewById(R.id.homerow_likeTV);
+            likedTV = mView.findViewById(R.id.homerow_likedTV);
+            likeIcon = mView.findViewById(R.id.homerow_likeIcon);
+            likedIcon = mView.findViewById(R.id.homerow_likedIcon);
             prof = mView.findViewById(R.id.homerow_prof);
-            likeCard=mView.findViewById(R.id.homerow_likecard);
+            likeCard = mView.findViewById(R.id.homerow_likecard);
         }
 
         void setPostImageView(String mUrl) {

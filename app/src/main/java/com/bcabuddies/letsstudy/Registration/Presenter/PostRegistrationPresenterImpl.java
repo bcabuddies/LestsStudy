@@ -54,7 +54,7 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
         }
     }
 
-    public void detailsUpload(String name, String age, String profileUri, String pursuing, Uri thumb_downloadUrl) {
+    private void detailsUpload(String name, String age, String profileUri, String pursuing, Uri thumb_downloadUrl) {
         String uid = user.getUid();
         HashMap<String, Object> data = new HashMap<>();
         data.put("name", name);
@@ -62,17 +62,16 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
         data.put("profileURL", thumb_downloadUrl.toString());
         data.put("pursuing", pursuing);
         data.put("uid", uid);
+        data.put("points",100 );
+        data.put("first","yes" );
         Log.e(TAG, "uploadData: data ready to upload " + data);
         try {
-            db.collection("Users").document(uid).set(data).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        postRegView.detailUploadSuccess();
-                    } else {
-                        postRegView.detailsUploadError(task.getException().getMessage());
-                        Log.e(TAG, "onComplete:try:  " + task.getException());
-                    }
+            db.collection("Users").document(uid).set(data).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    postRegView.detailUploadSuccess();
+                } else {
+                    postRegView.detailsUploadError(task.getException().getMessage());
+                    Log.e(TAG, "onComplete:try:  " + task.getException());
                 }
             });
         } catch (Exception e) {
