@@ -39,6 +39,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
     private static final String TAG = "PostRecAdapter";
     private FirebaseFirestore firebaseFirestore;
     private FirebaseUser firebaseUser;
+    private Boolean postLike;
     // Allows to remember the last item shown on screen
     private int lastPosition = -1;
 
@@ -73,6 +74,9 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         final String postUserId = postList.get(position).getUser();
         final String url = postList.get(position).getUrl();
 
+        //check postLike
+        checkLike(postID, current_user, holder);
+
         if (postList.get(position).getUrl() != null) {
             Log.e(TAG, "onBindViewHolder: url " + position);
             holder.setPostImageView(url);
@@ -100,48 +104,124 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         }
         setAnimation(holder.itemView, position);
 
-        holder.likeCard.setOnClickListener(v -> {
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("time_stamp", FieldValue.serverTimestamp());
-            map.put("uid", current_user);
-            try {
-                firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).set(map).addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        holder.likeTV.setVisibility(GONE);
-                        holder.likeIcon.setVisibility(GONE);
-                        holder.likedIcon.setVisibility(View.VISIBLE);
-                        holder.likedTV.setVisibility(View.VISIBLE);
-                        Log.e(TAG, "onComplete: like by" + current_user);
+        //liking and disliking
+        holder.likeCard.setOnClickListener(v -> likeFeature(postID, current_user, holder, postUserId));
 
-                        //adding points
-                        firebaseFirestore.collection("Users").document(postUserId).get().addOnCompleteListener(task1 -> {
-                            if (task1.getResult().exists()){
-                                long points = (long) task1.getResult().get("points");
-                                Log.e(TAG, "onBindViewHolder: points before adding 10 "+points );
-                                points = points + 10;
-                                Log.e(TAG, "onBindViewHolder: points after adding 10 "+points );
+    }
 
-                                HashMap<String, Object> data = new HashMap<>();
-                                data.put("points", points);
-
-                                firebaseFirestore.collection("Users").document(postUserId).update(data).addOnCompleteListener(task2 -> {
-                                    if (task2.isSuccessful()){
-                                        Log.e(TAG, "onBindViewHolder: points added " );
-                                    } else {
-                                        Log.e(TAG, "onBindViewHolder: points not added error "+task2.getException().getMessage() );
-                                    }
-                                });
-                            }
-                        });
-                    } else {
-                        Log.e(TAG, "onComplete: like failed");
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
+    private void checkLike(String postID, String current_user, ViewHolder holder){
+        firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).get().addOnCompleteListener(task -> {
+            if (task.getResult().exists()) {
+                postLike = true;
+                holder.likeTV.setVisibility(GONE);
+                holder.likeIcon.setVisibility(GONE);
+                holder.likedIcon.setVisibility(View.VISIBLE);
+                holder.likedTV.setVisibility(View.VISIBLE);
+                Log.e(TAG, "checkLike: post is already liked by user "+postID);
+                Log.e(TAG, "checkLike: postLike "+postLike+" post id "+postID );
+            } else {
+                postLike = false;
+                Log.e(TAG, "checkLike: postLike in else "+postLike +" post id "+postID );
             }
         });
+    }
 
+    private void likeFeature(String postID, String current_user, ViewHolder holder, String postUserId) {
+        firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).get().addOnCompleteListener(task -> {
+            if (task.getResult().exists()) {
+                postLike = true;
+                holder.likeTV.setVisibility(GONE);
+                holder.likeIcon.setVisibility(GONE);
+                holder.likedIcon.setVisibility(View.VISIBLE);
+                holder.likedTV.setVisibility(View.VISIBLE);
+                Log.e(TAG, "checkLike: post is already liked by user "+postID);
+                Log.e(TAG, "checkLike: postLike "+postLike+" post id "+postID );
+                dislike(current_user, postID, holder,postUserId);
+            } else {
+                postLike = false;
+                Log.e(TAG, "checkLike: postLike in else "+postLike +" post id "+postID );
+                like(current_user, postID, holder, postUserId);
+            }
+        });
+    }
+
+    private void dislike(String current_user, String postID, ViewHolder holder, String postUserId) {
+        firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).delete().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.e(TAG, "dislike: like deleted ");
+                holder.likeTV.setVisibility(View.VISIBLE);
+                holder.likeIcon.setVisibility(View.VISIBLE);
+                holder.likedIcon.setVisibility(GONE);
+                holder.likedTV.setVisibility(GONE);
+
+                postLike = false;
+
+                //removing points
+                firebaseFirestore.collection("Users").document(postUserId).get().addOnCompleteListener(task1 -> {
+                    if (task1.getResult().exists()) {
+                        long points = (long) task1.getResult().get("points");
+                        Log.e(TAG, "onBindViewHolder: points before removing 10 " + points);
+                        points = points - 10;
+                        Log.e(TAG, "onBindViewHolder: points after removing 10 " + points);
+
+                        HashMap<String, Object> data = new HashMap<>();
+                        data.put("points", points);
+
+                        firebaseFirestore.collection("Users").document(postUserId).update(data).addOnCompleteListener(task2 -> {
+                            if (task2.isSuccessful()) {
+                                Log.e(TAG, "onBindViewHolder: points removed ");
+                            } else {
+                                Log.e(TAG, "onBindViewHolder: points not added error " + task2.getException().getMessage());
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    private void like(String current_user, String postID, ViewHolder holder, String postUserId) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("time_stamp", FieldValue.serverTimestamp());
+        map.put("uid", current_user);
+        try {
+            firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).set(map).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    holder.likeTV.setVisibility(GONE);
+                    holder.likeIcon.setVisibility(GONE);
+                    holder.likedIcon.setVisibility(View.VISIBLE);
+                    holder.likedTV.setVisibility(View.VISIBLE);
+                    Log.e(TAG, "onComplete: like by" + current_user);
+
+                    postLike = true;
+
+                    //adding points
+                    firebaseFirestore.collection("Users").document(postUserId).get().addOnCompleteListener(task1 -> {
+                        if (task1.getResult().exists()) {
+                            long points = (long) task1.getResult().get("points");
+                            Log.e(TAG, "onBindViewHolder: points before adding 10 " + points);
+                            points = points + 10;
+                            Log.e(TAG, "onBindViewHolder: points after adding 10 " + points);
+
+                            HashMap<String, Object> data = new HashMap<>();
+                            data.put("points", points);
+
+                            firebaseFirestore.collection("Users").document(postUserId).update(data).addOnCompleteListener(task2 -> {
+                                if (task2.isSuccessful()) {
+                                    Log.e(TAG, "onBindViewHolder: points added ");
+                                } else {
+                                    Log.e(TAG, "onBindViewHolder: points not added error " + task2.getException().getMessage());
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    Log.e(TAG, "onComplete: like failed");
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

@@ -86,6 +86,10 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         user = auth.getCurrentUser();
+
+        //check user login
+        checkLogin(user);
+
         presenter = new HomePresenterImpl(auth, db);
         presenter.attachView(this);
         presenter.user(user);
@@ -188,5 +192,12 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         FragmentTransaction fragmentTransaction2 = getSupportFragmentManager().beginTransaction();
         fragmentTransaction2.replace(R.id.home_frameLayout, fragment);
         fragmentTransaction2.commit();
+    }
+
+    void checkLogin(FirebaseUser user){
+        if (user == null){
+            Utils.setIntentNoBackLog(this, Login.class);
+            finish();
+        }
     }
 }
