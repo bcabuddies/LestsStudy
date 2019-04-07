@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bcabuddies.letsstudy.Model.PostData;
@@ -107,6 +108,28 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         //liking and disliking
         holder.likeCard.setOnClickListener(v -> likeFeature(postID, current_user, holder, postUserId));
 
+        //menu on post click
+        holder.postMenu.setOnClickListener(v -> postMenu(postID, current_user, postUserId, holder));
+    }
+
+    private void postMenu(String postID, String current_user, String postUserId, ViewHolder holder) {
+        PopupMenu popupMenu = new PopupMenu(context, holder.postMenu);
+        popupMenu.getMenuInflater().inflate(R.menu.empty_menu, popupMenu.getMenu());
+        String menuListOwn[] = {"Delete"};
+        String menuListUser[] = {"Report"};
+
+        if (current_user.equals(postUserId)){
+            for (String s : menuListOwn) {
+                popupMenu.getMenu().add(s);
+                Log.e(TAG, "pursuingMenu: s " + s);
+            }
+        } else {
+            for (String s : menuListUser) {
+                popupMenu.getMenu().add(s);
+                Log.e(TAG, "pursuingMenu: s " + s);
+            }
+        }
+        popupMenu.show();
     }
 
     private void checkLike(String postID, String current_user, ViewHolder holder){
@@ -260,6 +283,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         private ImageView likeIcon, likedIcon;
         private CircleImageView prof;
         private CardView likeCard;
+        private ImageView postMenu;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -274,6 +298,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             likedIcon = mView.findViewById(R.id.homerow_likedIcon);
             prof = mView.findViewById(R.id.homerow_prof);
             likeCard = mView.findViewById(R.id.homerow_likecard);
+            postMenu = mView.findViewById(R.id.homerow_menu);
         }
 
         void setPostImageView(String mUrl) {
