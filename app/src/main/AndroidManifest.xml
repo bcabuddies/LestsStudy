@@ -12,20 +12,23 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".Post.view.Post"></activity>
-        <activity android:name=".NewPost.view.NewPost" />
-        <activity android:name=".Registration.view.PostRegistration" />
-        <activity android:name=".Registration.view.Registration" />
-        <activity
-            android:name=".Login.view.Login"
-            tools:ignore="InnerclassSeparator"></activity>
-        <activity android:name=".Home.view.MainActivity">
+        <activity android:name=".WelcomeSplashScreen"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Post.view.Post" />
+        <activity android:name=".NewPost.view.NewPost" />
+        <activity android:name=".Registration.view.PostRegistration" />
+        <activity android:name=".Registration.view.Registration" />
+        <activity
+            android:name=".Login.view.Login"
+            tools:ignore="InnerclassSeparator" />
+        <activity android:name=".Home.view.MainActivity"/>
+
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:screenOrientation="portrait"
