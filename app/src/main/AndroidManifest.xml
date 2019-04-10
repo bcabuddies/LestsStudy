@@ -12,7 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".WelcomeSplashScreen"
+        <activity android:name=".Login.view.LoginSplash"></activity>
+        <activity
+            android:name=".Login.view.WelcomeSplashScreen"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,8 +29,7 @@
         <activity
             android:name=".Login.view.Login"
             tools:ignore="InnerclassSeparator" />
-        <activity android:name=".Home.view.MainActivity"/>
-
+        <activity android:name=".Home.view.MainActivity" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:screenOrientation="portrait"

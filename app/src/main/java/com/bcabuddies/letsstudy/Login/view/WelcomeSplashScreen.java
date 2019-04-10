@@ -1,4 +1,4 @@
-package com.bcabuddies.letsstudy;
+package com.bcabuddies.letsstudy.Login.view;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.bcabuddies.letsstudy.Home.view.MainActivity;
+import com.bcabuddies.letsstudy.R;
 
 public class WelcomeSplashScreen extends Activity {
 

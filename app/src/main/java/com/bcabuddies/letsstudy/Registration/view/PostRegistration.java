@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bcabuddies.letsstudy.Home.view.MainActivity;
+import com.bcabuddies.letsstudy.Login.view.LoginSplash;
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.Registration.Presenter.PostRegistrationPresenterImpl;
 import com.bcabuddies.letsstudy.utils.Utils;
@@ -65,19 +66,12 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     @BindView(R.id.post_reg_inPursuing_layout)
     TextInputLayout postRegInPursuingLayout;
 
-    private FirebaseUser user;
-    private FirebaseAuth auth;
-    private FirebaseFirestore firebaseFirestore;
     private PostRegistrationPresenterImpl presenter;
     private PopupMenu popup;
     private final static String TAG = "PostRegistration.java";
-    private String profile, fName;
+    private String profile;
     private final Calendar myCalendar = Calendar.getInstance();
     private Bitmap thumb_Bitmap = null;
-    private Uri mainImageUri = null;
-    private StorageReference thumbImgRef;
-    private byte[] thumb_byte;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +79,33 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         setContentView(R.layout.activity_post_registration);
         ButterKnife.bind(this);
 
+        FirebaseApp.initializeApp(this);
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        StorageReference thumbImgRef = FirebaseStorage.getInstance().getReference().child("Thumb_images");
+
+        //if name found user is not coming again and not the first time
+        try {
+            String name = user.getDisplayName();
+
+            if (!name.isEmpty()) {
+                Log.e(TAG, "onCreate: found name "+name);
+                Intent loginSplashIntent = new Intent(PostRegistration.this, LoginSplash.class);
+                loginSplashIntent.putExtra("name", name);
+                startActivity(loginSplashIntent);
+                finish();
+            } else {
+                Log.e(TAG, "onCreate: Nothing found in name ");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "onCreate: name is null exception "+e.getMessage() );
+        }
+
         try {
             progressBar.setVisibility(View.VISIBLE);
-            fName = this.getIntent().getBundleExtra("data").getString("name");
+            String fName = this.getIntent().getBundleExtra("data").getString("name");
             profile = this.getIntent().getBundleExtra("data").getString("profile");
             preData(fName, profile);
             try {
@@ -112,11 +130,6 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
 
         menuInitiated();
 
-        FirebaseApp.initializeApp(this);
-        auth = FirebaseAuth.getInstance();
-        user = auth.getCurrentUser();
-        firebaseFirestore = FirebaseFirestore.getInstance();
-        thumbImgRef = FirebaseStorage.getInstance().getReference().child("Thumb_images");
         presenter = new PostRegistrationPresenterImpl(firebaseFirestore, user, thumbImgRef);
         presenter.attachView(this);
         presenter.getMenu();
@@ -277,7 +290,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                mainImageUri = result.getUri();
+                Uri mainImageUri = result.getUri();
                 Log.v("mkeyreg", "mianuri= " + mainImageUri);
                 File thumb_filePathUri = new File(mainImageUri.getPath());
                 try {
@@ -287,7 +300,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
                 }
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 thumb_Bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-                thumb_byte = byteArrayOutputStream.toByteArray();
+                byte[] thumb_byte = byteArrayOutputStream.toByteArray();
                 postRegProfileView.setImageURI(mainImageUri);
                 presenter.imagePost(thumb_byte);
             }
