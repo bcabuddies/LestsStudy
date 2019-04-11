@@ -75,7 +75,6 @@ public class Feed_home extends Fragment implements Feed_homeView {
         presenter = new Feed_homePresenterImpl(user, db);
         presenter.attachView(this);
 
-        //recyclerView
         recyclerViewInit();
         presenter.getData();
 

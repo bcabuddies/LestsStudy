@@ -2,6 +2,7 @@ package com.bcabuddies.letsstudy.Adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +11,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.bcabuddies.letsstudy.Model.PostData;
+import com.bcabuddies.letsstudy.Post.view.Post;
 import com.bcabuddies.letsstudy.R;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -110,6 +113,9 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
 
         //menu on post click
         holder.postMenu.setOnClickListener(v -> postMenu(postID, current_user, postUserId, holder));
+
+        //opening a post
+        holder.postCard.setOnClickListener(v -> openPost(postID));
     }
 
     private void postMenu(String postID, String current_user, String postUserId, ViewHolder holder) {
@@ -166,6 +172,12 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
                 like(current_user, postID, holder, postUserId);
             }
         });
+    }
+
+    private void openPost(String postID){
+        Intent openPost = new Intent(context, Post.class);
+        openPost.putExtra("postID", postID);
+        context.startActivity(openPost);
     }
 
     private void dislike(String current_user, String postID, ViewHolder holder, String postUserId) {
@@ -284,6 +296,8 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         private CircleImageView prof;
         private CardView likeCard;
         private ImageView postMenu;
+        private CardView postCard;
+        private TextView longPost;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -299,10 +313,15 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             prof = mView.findViewById(R.id.homerow_prof);
             likeCard = mView.findViewById(R.id.homerow_likecard);
             postMenu = mView.findViewById(R.id.homerow_menu);
+            postCard = mView.findViewById(R.id.homerow_postCard);
+            longPost = mView.findViewById(R.id.homerow_longTV);
         }
 
         void setPostImageView(String mUrl) {
             Glide.with(context).load(mUrl).into(postImageView);
+            postImageView.requestLayout();
+            postImageView.getLayoutParams().height = 800;
+            longPost.setVisibility(View.VISIBLE);
         }
 
         void descSet(String text) {

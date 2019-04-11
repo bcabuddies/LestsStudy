@@ -6,6 +6,7 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/homerow_postCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
@@ -87,6 +88,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
+                android:scaleType="center"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/homerow_descTV" />
@@ -125,9 +127,9 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_marginLeft="30dp"
-                        android:visibility="gone"
-                        android:tint="#FF48A5"
                         android:src="@drawable/like_selected"
+                        android:tint="#FF48A5"
+                        android:visibility="gone"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -150,14 +152,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:gravity="start"
-                        android:visibility="gone"
                         android:text="Liked"
                         android:textSize="20dp"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toTopOf="parent"
                         app:layout_constraintLeft_toRightOf="@id/homerow_likedIcon"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="parent" />
-
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -165,11 +166,11 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/homerow_cmntcard"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
                 app:layout_constraintLeft_toRightOf="@id/homerow_likecard"
                 app:layout_constraintTop_toBottomOf="@id/homerow_imageview"
                 app:layout_constraintWidth_default="percent"
@@ -179,9 +180,9 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="5dp"
                     android:layout_marginRight="5dp"
-                    android:layout_marginBottom="5dp">
+                    android:layout_marginBottom="5dp"
+                    android:padding="5dp">
 
 
                     <ImageView
@@ -209,6 +210,21 @@
 
 
             </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/homerow_longTV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="@string/long_post_touch_to_see_more"
+                android:textSize="24sp"
+                android:padding="5dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/droid_sans"
+                android:background="#90000000"
+                app:layout_constraintBottom_toBottomOf="@+id/homerow_imageview"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/homerow_imageview" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
