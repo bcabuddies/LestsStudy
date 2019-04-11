@@ -73,7 +73,6 @@ public class Login extends AppCompatActivity implements LoginView {
     private static final String TAG = "Login.java";
     private FirebaseAuth.AuthStateListener authStateListener;
 
-
     //this class will handle the layout
 
     FirebaseAuth auth;

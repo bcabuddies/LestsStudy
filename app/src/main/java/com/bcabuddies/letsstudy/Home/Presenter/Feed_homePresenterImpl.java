@@ -5,8 +5,6 @@ import android.util.Log;
 
 import com.bcabuddies.letsstudy.Home.view.Feed_homeView;
 import com.bcabuddies.letsstudy.Model.PostData;
-import com.bcabuddies.letsstudy.Model.UserData;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -19,15 +17,12 @@ import java.util.Objects;
 
 public class Feed_homePresenterImpl implements Feed_homePresenter {
 
-    private FirebaseUser user;
     private FirebaseFirestore db;
     private Feed_homeView homeView;
     private static final String TAG = "Feed_homePresImpl";
-    private ArrayList<UserData> userList;
     private ArrayList<PostData> postList;
 
-    public Feed_homePresenterImpl(FirebaseUser user, FirebaseFirestore db) {
-        this.user = user;
+    public Feed_homePresenterImpl(FirebaseFirestore db) {
         this.db = db;
     }
 
@@ -56,7 +51,6 @@ public class Feed_homePresenterImpl implements Feed_homePresenter {
     @Override
     public void getData() {
         postList = new ArrayList<>();
-        userList = new ArrayList<>();
         Query sortQuery = db.collection("Posts").orderBy("timestamp", Query.Direction.ASCENDING);
         sortQuery.addSnapshotListener((queryDocumentSnapshots, e) -> {
             if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
