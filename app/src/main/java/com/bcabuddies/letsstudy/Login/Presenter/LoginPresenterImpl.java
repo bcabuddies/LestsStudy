@@ -71,10 +71,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                 loginView.thirdPartyLoginSuccess();
             }
         });
-
-
     }
-
 
     //facebook signIn
     public void handleFacebookAccessToken(AccessToken token) {

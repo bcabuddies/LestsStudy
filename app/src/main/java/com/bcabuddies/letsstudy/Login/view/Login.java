@@ -37,7 +37,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONException;
 
@@ -72,6 +71,8 @@ public class Login extends AppCompatActivity implements LoginView {
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 1;
     private static final String TAG = "Login.java";
+    private FirebaseAuth.AuthStateListener authStateListener;
+
 
     //this class will handle the layout
 
@@ -95,9 +96,10 @@ public class Login extends AppCompatActivity implements LoginView {
 
         auth = FirebaseAuth.getInstance();
 
+
         loginPresenter = new LoginPresenterImpl(auth);
         loginPresenter.attachView(this);
-        loginPresenter.checkLogin();
+        checkLogin();
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -112,15 +114,19 @@ public class Login extends AppCompatActivity implements LoginView {
 
     }
 
+    private void checkLogin() {
+        authStateListener = firebaseAuth -> {
+            if (firebaseAuth.getCurrentUser() != null) {
+                Utils.setIntentNoBackLog(this, MainActivity.class);
+                finish();
+            }
+        };
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser != null) {
-            isLogin(true);
-        }
-
+        auth.addAuthStateListener(authStateListener);
     }
 
     @OnClick({R.id.login_forgot_passTV, R.id.login_google_imageView, R.id.login_facebook_imageView, R.id.login_registrationTV, R.id.login_loginBtn})

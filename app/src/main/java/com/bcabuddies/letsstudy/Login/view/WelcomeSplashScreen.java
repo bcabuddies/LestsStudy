@@ -23,7 +23,7 @@ public class WelcomeSplashScreen extends Activity {
         //show splash screen
         int SPLASH_TIME_OUT = 1000;
         new Handler().postDelayed(() -> {
-            Intent welcomeIntent = new Intent(WelcomeSplashScreen.this, MainActivity.class);
+            Intent welcomeIntent = new Intent(WelcomeSplashScreen.this, Login.class);
             startActivity(welcomeIntent);
             finish();
         }, SPLASH_TIME_OUT);

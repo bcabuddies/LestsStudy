@@ -72,9 +72,11 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
     private FirebaseAuth auth;
     private FirebaseUser user;
     private FirebaseFirestore db;
+
     private Unbinder bind;
     //fragments
     private Fragment fragment = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +88,6 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         user = auth.getCurrentUser();
-
-        //check user login
-        checkLogin(user);
 
         presenter = new HomePresenterImpl(auth, db);
         presenter.attachView(this);
@@ -131,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         long points = user.getLong("points");
 
         homeUserNameText.setText(name);
-        homeUserStudyPointText.setText(""+points);
+        homeUserStudyPointText.setText("" + points);
         Glide.with(this).load(profileURL).into(homeUserProfileView);
     }
 
@@ -194,10 +193,4 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         fragmentTransaction2.commit();
     }
 
-    void checkLogin(FirebaseUser user){
-        if (user == null){
-            Utils.setIntentNoBackLog(this, Login.class);
-            finish();
-        }
-    }
 }
