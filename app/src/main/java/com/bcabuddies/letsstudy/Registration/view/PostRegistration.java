@@ -85,16 +85,16 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         StorageReference thumbImgRef = FirebaseStorage.getInstance().getReference().child("Thumb_images");
 
-        //if name found user is not coming again and not the first time
+      /*  //if name found user is not coming again and not the first time
         try {
             String name = user.getDisplayName();
             Bundle data = getIntent().getBundleExtra("data");
             String dataName = data.getString("name");
-            Log.e(TAG, "onCreate: name = "+name );
-            Log.e(TAG, "onCreate: dataName = "+data.getString("name") );
+            Log.e(TAG, "onCreate: name = " + name);
+            Log.e(TAG, "onCreate: dataName = " + data.getString("name"));
 
             if (!name.isEmpty() && dataName.isEmpty()) {
-                Log.e(TAG, "onCreate: found name "+name);
+                Log.e(TAG, "onCreate: found name " + name);
                 Intent loginSplashIntent = new Intent(PostRegistration.this, LoginSplash.class);
                 loginSplashIntent.putExtra("name", name);
                 startActivity(loginSplashIntent);
@@ -104,8 +104,8 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e(TAG, "onCreate: name is null exception "+e.getMessage() );
-        }
+            Log.e(TAG, "onCreate: name is null exception " + e.getMessage());
+        }*/
 
         try {
             progressBar.setVisibility(View.VISIBLE);
@@ -115,6 +115,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
             try {
                 String age = this.getIntent().getBundleExtra("data").getString("age");
                 String course = this.getIntent().getBundleExtra("data").getString("course");
+                Log.e(TAG, "onCreate: postreg age"+age+"  course: "+course );
                 preSettingsData(age, course);
                 progressBar.setVisibility(View.GONE);
             } catch (Exception e) {

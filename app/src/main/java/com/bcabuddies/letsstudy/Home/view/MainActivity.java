@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         presenter = new HomePresenterImpl(auth, db);
         presenter.attachView(this);
         presenter.user(user);
+        presenter.userPoints(user);
 
         fragment = Feed_home.newInstance();
         final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -123,15 +124,17 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         //User data receive here
         homeUserProfileView = findViewById(R.id.home_user_profileView);
         homeUserNameText = findViewById(R.id.home_user_nameText);
-        homeUserStudyPointText = findViewById(R.id.home_user_studyPointText);
-
         String name = user.getString("name");
         String profileURL = user.getString("profile");
-        long points = user.getLong("points");
-
         homeUserNameText.setText(name);
-        homeUserStudyPointText.setText("" + points);
         Glide.with(this).load(profileURL).into(homeUserProfileView);
+    }
+
+    @Override
+    public void getUserPoints(Bundle userPoints) {
+        homeUserStudyPointText = findViewById(R.id.home_user_studyPointText);
+        long points = userPoints.getLong("points");
+        homeUserStudyPointText.setText("" + points);
     }
 
     @Override

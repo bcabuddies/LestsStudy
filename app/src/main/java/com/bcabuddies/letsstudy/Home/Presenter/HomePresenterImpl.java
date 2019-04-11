@@ -4,17 +4,14 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.bcabuddies.letsstudy.Home.view.HomeView;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
-import java.util.HashMap;
-import java.util.Objects;
-
-import androidx.annotation.NonNull;
+import javax.annotation.Nullable;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
@@ -31,13 +28,12 @@ public class HomePresenterImpl implements HomePresenter {
 
     @Override
     public void user(FirebaseUser user) {
-        firebaseFirestore.collection("Users").document(user.getUid()).get().addOnCompleteListener(task -> {
+       firebaseFirestore.collection("Users").document(user.getUid()).get().addOnCompleteListener(task -> {
             if (task.getResult().exists()) {
-                Log.e(TAG, "user: data received "+task.getResult());
                 Bundle data = new Bundle();
-                data.putString("name",task.getResult().getString("name"));
-                data.putString("profile",task.getResult().getString("profileURL"));
-                data.putLong("points", (Long) task.getResult().get("points"));
+                Log.e(TAG, "user: data received " + task.getResult());
+                data.putString("name", (String) task.getResult().getString("name"));
+                data.putString("profile", (String) task.getResult().getString("profileURL"));
                 homeView.getUserDetails(data);
             } else {
                 try {
@@ -47,6 +43,9 @@ public class HomePresenterImpl implements HomePresenter {
                 }
             }
         });
+
+
+
     }
 
     public void firebaseDataPre() {
@@ -61,12 +60,31 @@ public class HomePresenterImpl implements HomePresenter {
                 String name = task.getResult().getString("name");
                 String courseName = task.getResult().getString("pursuing");
                 String age = task.getResult().getString("age");
-                Long points = (Long)task.getResult().get("points");
+                Long points = (Long) task.getResult().get("points");
                 Log.e(TAG, "onComplete: firebasepredata: proff " + profUrl);
                 Log.e(TAG, "onComplete: firebasedatapre : " + name + "    " + profUrl + "    " + courseName);
-                homeView.firebaseData(profUrl,name,age,courseName,points);
+                homeView.firebaseData(profUrl, name, age, courseName, points);
             } else {
                 Log.e(TAG, "onComplete: firebasepredata: no data");
+            }
+        });
+    }
+
+    @Override
+    public void userPoints(FirebaseUser user) {
+        firebaseFirestore.collection("Users").document(user.getUid()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    Bundle data = new Bundle();
+
+                    data.putLong("points", (Long) documentSnapshot.getData().get("points"));
+                    Log.e(TAG, "onEvent: pointsret" + documentSnapshot.getData().get("points"));
+                    homeView.getUserPoints(data);
+                }
+                else {
+                    e.printStackTrace();
+                }
             }
         });
     }
