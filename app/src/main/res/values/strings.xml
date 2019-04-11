@@ -34,4 +34,5 @@
     <string name="write_comment">Write comment..</string>
     <string name="comment_btn">comment btn</string>
     <string name="long_post_touch_to_see_more">Long Post touch to see more</string>
+    <string name="search_community">Search community</string>
 </resources>
