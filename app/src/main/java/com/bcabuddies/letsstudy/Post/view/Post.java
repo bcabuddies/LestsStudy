@@ -7,21 +7,28 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bcabuddies.letsstudy.Adapter.CommentRecyclerAdapter;
+import com.bcabuddies.letsstudy.Model.CommentData;
 import com.bcabuddies.letsstudy.Post.Presenter.PostPresenterImpl;
 import com.bcabuddies.letsstudy.R;
 import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -50,7 +57,14 @@ public class Post extends AppCompatActivity implements PostView {
     TextInputLayout commentLayout;
     @BindView(R.id.comment_post_btn)
     ImageView commentPostBtn;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
+
     private final static String TAG = "Post.java";
+    private PostPresenterImpl presenter;
+    private ArrayList<CommentData> commentList;
+    private CommentRecyclerAdapter adapter;
+    private String postID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,21 +77,37 @@ public class Post extends AppCompatActivity implements PostView {
         homerowMenu.setVisibility(View.GONE);
 
         try {
-            String postID = getIntent().getStringExtra("postID");
+            postID = getIntent().getStringExtra("postID");
             Log.e(TAG, "onCreate: postID " + postID);
 
             FirebaseApp.initializeApp(this);
             FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
-            PostPresenterImpl presenter = new PostPresenterImpl(postID, firestore);
+            presenter = new PostPresenterImpl(postID, firestore);
             presenter.attachView(this);
             presenter.getPost();
+            presenter.getComments();
         } catch (Exception e) {
             e.printStackTrace();
             Log.e(TAG, "onCreate: Exception " + e.getMessage());
             finish();
         }
 
+        commentList = new ArrayList<>();
+
+        commentPostBtn.setOnClickListener(v -> {
+            String comment = commentLayout.getEditText().getText().toString();
+            String user;
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            user = auth.getCurrentUser().getUid();
+            if (!comment.isEmpty()) {
+                presenter.postComment(comment, user, postID);
+                commentEditText.setText(null);
+                commentEditText.clearFocus();
+            } else {
+                Toast.makeText(this, "Please write some comment", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -113,6 +143,16 @@ public class Post extends AppCompatActivity implements PostView {
             finish();
             Log.e(TAG, "setPost: no data in hashMap");
         }
+    }
+
+    @Override
+    public void setComments(ArrayList<CommentData> commentDataList) {
+        //send data to Adapter
+        commentList = commentDataList;
+        adapter = new CommentRecyclerAdapter(commentList);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override

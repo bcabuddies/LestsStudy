@@ -11,7 +11,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.bcabuddies.letsstudy.Model.PostData;
@@ -83,6 +82,8 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         if (postList.get(position).getUrl() != null) {
             Log.e(TAG, "onBindViewHolder: url " + position);
             holder.setPostImageView(url);
+            //change the scaleType of postImageView
+            holder.postImageView.setScaleType(ImageView.ScaleType.CENTER);
         }
 
         //this will retrieve user data at for each position
@@ -123,7 +124,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         String menuListOwn[] = {"Delete"};
         String menuListUser[] = {"Report"};
 
-        if (current_user.equals(postUserId)){
+        if (current_user.equals(postUserId)) {
             for (String s : menuListOwn) {
                 popupMenu.getMenu().add(s);
                 Log.e(TAG, "pursuingMenu: s " + s);
@@ -137,7 +138,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         popupMenu.show();
     }
 
-    private void checkLike(String postID, String current_user, ViewHolder holder){
+    private void checkLike(String postID, String current_user, ViewHolder holder) {
         firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).get().addOnCompleteListener(task -> {
             if (task.getResult().exists()) {
                 postLike = true;
@@ -145,11 +146,11 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
                 holder.likeIcon.setVisibility(GONE);
                 holder.likedIcon.setVisibility(View.VISIBLE);
                 holder.likedTV.setVisibility(View.VISIBLE);
-                Log.e(TAG, "checkLike: post is already liked by user "+postID);
-                Log.e(TAG, "checkLike: postLike "+postLike+" post id "+postID );
+                Log.e(TAG, "checkLike: post is already liked by user " + postID);
+                Log.e(TAG, "checkLike: postLike " + postLike + " post id " + postID);
             } else {
                 postLike = false;
-                Log.e(TAG, "checkLike: postLike in else "+postLike +" post id "+postID );
+                Log.e(TAG, "checkLike: postLike in else " + postLike + " post id " + postID);
             }
         });
     }
@@ -162,18 +163,18 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
                 holder.likeIcon.setVisibility(GONE);
                 holder.likedIcon.setVisibility(View.VISIBLE);
                 holder.likedTV.setVisibility(View.VISIBLE);
-                Log.e(TAG, "checkLike: post is already liked by user "+postID);
-                Log.e(TAG, "checkLike: postLike "+postLike+" post id "+postID );
-                dislike(current_user, postID, holder,postUserId);
+                Log.e(TAG, "checkLike: post is already liked by user " + postID);
+                Log.e(TAG, "checkLike: postLike " + postLike + " post id " + postID);
+                dislike(current_user, postID, holder, postUserId);
             } else {
                 postLike = false;
-                Log.e(TAG, "checkLike: postLike in else "+postLike +" post id "+postID );
+                Log.e(TAG, "checkLike: postLike in else " + postLike + " post id " + postID);
                 like(current_user, postID, holder, postUserId);
             }
         });
     }
 
-    private void openPost(String postID){
+    private void openPost(String postID) {
         Intent openPost = new Intent(context, Post.class);
         openPost.putExtra("postID", postID);
         context.startActivity(openPost);

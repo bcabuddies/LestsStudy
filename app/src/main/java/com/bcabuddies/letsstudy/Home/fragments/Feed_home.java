@@ -79,7 +79,7 @@ public class Feed_home extends Fragment implements Feed_homeView {
 
         db = FirebaseFirestore.getInstance();
 
-        presenter = new Feed_homePresenterImpl(user, db);
+        presenter = new Feed_homePresenterImpl(db);
         presenter.attachView(this);
 
         recyclerViewInit();

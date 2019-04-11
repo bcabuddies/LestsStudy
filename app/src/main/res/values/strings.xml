@@ -25,7 +25,6 @@
     <string name="study_points">Study Points</string>
     <string name="_000000">000000</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="enter_description">Enter Description</string>
     <string name="submit_text">Submit Text</string>
@@ -35,4 +34,9 @@
     <string name="comment_btn">comment btn</string>
     <string name="long_post_touch_to_see_more">Long Post touch to see more</string>
     <string name="search_community">Search community</string>
+    <string name="comment">Comment</string>
+    <string name="timestamp">TimeStamp</string>
+    <string name="name_and_comment">Name and Comment</string>
+    <string name="delete_button">delete button</string>
+    <string name="comment_like_btn">comment like btn</string>
 </resources>
