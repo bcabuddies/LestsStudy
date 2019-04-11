@@ -1,6 +1,8 @@
 package com.bcabuddies.letsstudy.Home.fragments;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,7 +18,6 @@ import com.bcabuddies.letsstudy.Home.Presenter.Feed_homePresenter;
 import com.bcabuddies.letsstudy.Home.Presenter.Feed_homePresenterImpl;
 import com.bcabuddies.letsstudy.Home.view.Feed_homeView;
 import com.bcabuddies.letsstudy.Model.PostData;
-import com.bcabuddies.letsstudy.Model.UserData;
 import com.bcabuddies.letsstudy.NewPost.view.NewPost;
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.utils.Utils;
@@ -27,6 +28,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,6 +51,8 @@ public class Feed_home extends Fragment implements Feed_homeView {
     Button feedPhotoSubmitBtn;
     @BindView(R.id.feed_recyclerView)
     RecyclerView feedRecyclerView;
+    @BindView(R.id.home_new_post_view)
+    CardView homeNewPostView;
 
     private final static String TAG = "Feed.java";
     private Feed_homePresenter presenter;
@@ -55,6 +60,8 @@ public class Feed_home extends Fragment implements Feed_homeView {
     private FirebaseUser user;
     private PostRecyclerAdapter postRecyclerAdapter;
     private ArrayList<PostData> postList;
+    private static int firstVisibleInListview;
+
 
     public Feed_home() {
         // Required empty public constructor
@@ -82,7 +89,7 @@ public class Feed_home extends Fragment implements Feed_homeView {
     }
 
     private void recyclerViewInit() {
-        Log.e(TAG, "recyclerViewInit: " );
+        Log.e(TAG, "recyclerViewInit: ");
         postList = new ArrayList<>();
     }
 
@@ -128,13 +135,66 @@ public class Feed_home extends Fragment implements Feed_homeView {
     public void getData(ArrayList<PostData> pData) {
         //getting user and post data from presenter
         postList = pData;
-        Log.e(TAG, "getData: feed_home postlist size "+postList.size() );
+        Log.e(TAG, "getData: feed_home postlist size " + postList.size());
         postRecyclerAdapter = new PostRecyclerAdapter(postList);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setReverseLayout(true);
         mLayoutManager.setStackFromEnd(true);
         feedRecyclerView.setLayoutManager(mLayoutManager);
         feedRecyclerView.setAdapter(postRecyclerAdapter);
+
+        firstVisibleInListview = mLayoutManager.findFirstVisibleItemPosition();
+
+        feedRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int currentFirstVisible = mLayoutManager.findFirstVisibleItemPosition();
+
+                if (currentFirstVisible >= firstVisibleInListview)
+                    Log.e("RecyclerView scrolled: ", "scroll up! " + dy);
+                else
+                    Log.e("RecyclerView scrolled: ", "scroll down! " + dy);
+
+                firstVisibleInListview = currentFirstVisible;
+
+                if (dy >= 100) {
+                    Log.e(TAG, "onScrolled: moving down");
+                    //fade
+                    homeNewPostView.animate()
+                            .translationY(-100)
+                            .alpha(0.0f)
+                            .setDuration(1000)
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    feedTextLayout.setVisibility(View.GONE);
+                                    feedPhotoSubmitBtn.setVisibility(View.GONE);
+                                    feedTextSubmitBtn.setVisibility(View.GONE);
+                                }
+                            });
+                } else if (dy <= -100) {
+                    Log.e(TAG, "onScrolled: moving up");
+                    //show
+                    homeNewPostView.animate()
+                            .translationY(0)
+                            .alpha(1)
+                            .setDuration(1000)
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    feedTextLayout.setVisibility(View.VISIBLE);
+                                    feedPhotoSubmitBtn.setVisibility(View.VISIBLE);
+                                    feedTextSubmitBtn.setVisibility(View.VISIBLE);
+                                }
+                            });
+                }
+            }
+        });
+
         //postRecyclerAdapter.notifyDataSetChanged();
     }
 

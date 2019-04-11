@@ -74,7 +74,6 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         //getting data
         final String text = postList.get(position).getText();
         final Date timestamp = postList.get(position).getTimestamp();
-        final String type = postList.get(position).getType();
         final String postUserId = postList.get(position).getUser();
         final String url = postList.get(position).getUrl();
 
