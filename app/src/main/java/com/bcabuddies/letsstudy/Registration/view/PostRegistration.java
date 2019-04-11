@@ -88,15 +88,19 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         //if name found user is not coming again and not the first time
         try {
             String name = user.getDisplayName();
+            Bundle data = getIntent().getBundleExtra("data");
+            String dataName = data.getString("name");
+            Log.e(TAG, "onCreate: name = "+name );
+            Log.e(TAG, "onCreate: dataName = "+data.getString("name") );
 
-            if (!name.isEmpty()) {
+            if (!name.isEmpty() && dataName.isEmpty()) {
                 Log.e(TAG, "onCreate: found name "+name);
                 Intent loginSplashIntent = new Intent(PostRegistration.this, LoginSplash.class);
                 loginSplashIntent.putExtra("name", name);
                 startActivity(loginSplashIntent);
                 finish();
             } else {
-                Log.e(TAG, "onCreate: Nothing found in name ");
+                Log.e(TAG, "onCreate: Nothing found in name but in dataName");
             }
         } catch (Exception e) {
             e.printStackTrace();
