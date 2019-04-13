@@ -149,15 +149,6 @@ public class Feed_home extends Fragment implements Feed_homeView {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                int currentFirstVisible = mLayoutManager.findFirstVisibleItemPosition();
-
-                if (currentFirstVisible >= firstVisibleInListview)
-                    Log.e("RecyclerView scrolled: ", "scroll up! " + dy);
-                else
-                    Log.e("RecyclerView scrolled: ", "scroll down! " + dy);
-
-                firstVisibleInListview = currentFirstVisible;
-
                 if (dy >= 100) {
                     Log.e(TAG, "onScrolled: moving down");
                     //fade

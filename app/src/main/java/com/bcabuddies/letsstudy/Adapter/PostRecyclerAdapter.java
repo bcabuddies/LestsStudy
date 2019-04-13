@@ -83,6 +83,9 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         //like count
         likeCount(postID, holder);
 
+        //comment count
+        commentCount(postID, holder);
+
         if (postList.get(position).getUrl() != null) {
             Log.e(TAG, "onBindViewHolder: url " + position);
             holder.setPostImageView(url);
@@ -123,6 +126,28 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
     }
 
     @SuppressLint("SetTextI18n")
+    private void commentCount(String postID, ViewHolder holder) {
+        firebaseFirestore.collection("Posts").document(postID).collection("Comments").addSnapshotListener((queryDocumentSnapshots, e) -> {
+            try {
+                if (!Objects.requireNonNull(queryDocumentSnapshots).isEmpty()) {
+                    int count = queryDocumentSnapshots.size();
+                    if (count == 1)
+                        holder.commentCountTV.setText("" + count + " Comment");
+                    else
+                        holder.commentCountTV.setText("" + count + " Comments");
+                    Log.e(TAG, "commentCount: comments count " + count);
+                } else {
+                    holder.commentCountTV.setText("No comments");
+                    Log.e(TAG, "commentCount: no comments");
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                Log.e(TAG, "commentCount: exception getting comments " + e1.getMessage());
+            }
+        });
+    }
+
+    @SuppressLint("SetTextI18n")
     private void likeCount(String postID, ViewHolder holder) {
         //count no of likes
         firebaseFirestore.collection("Posts").document(postID).collection("Likes").addSnapshotListener((queryDocumentSnapshots, e) -> {
@@ -133,7 +158,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
                     if (count > 0) {
                         holder.likeCountTV.setText("+" + count);
                     } else {
-                        holder.likeCountTV.setText("");
+                        holder.likeCountTV.setText("1");
                         Log.e(TAG, "likeCount: only 1 like by current user " + postID);
                     }
                 } else {
@@ -229,6 +254,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
 
     private void report(String postID, String current_user) {
         //to report the post
+        Log.e(TAG, "report: postID current_user " + postID + " " + current_user);
     }
 
     private void negativeLike(String postID, String current_user) {
@@ -392,6 +418,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         private CardView postCard;
         private TextView longPost;
         private TextView likeCountTV;
+        private TextView commentCountTV;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -406,6 +433,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             postCard = mView.findViewById(R.id.homerow_postCard);
             longPost = mView.findViewById(R.id.homerow_longTV);
             likeCountTV = mView.findViewById(R.id.homerow_likeCount);
+            commentCountTV = mView.findViewById(R.id.homerow_cmntCount);
         }
 
         void setPostImageView(String mUrl) {

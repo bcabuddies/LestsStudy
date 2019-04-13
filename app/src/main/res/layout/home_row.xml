@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -21,6 +22,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp">
+
+            <TextView
+                android:id="@+id/homerow_cmntCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_marginBottom="4dp"
+                android:text="@string/comments"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/homerow_commentBtn"
+                app:layout_constraintStart_toEndOf="@+id/homerow_commentBtn"
+                app:layout_constraintTop_toTopOf="@+id/homerow_commentBtn"
+                app:layout_constraintVertical_bias="1.0" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/homerow_prof"
@@ -113,12 +127,12 @@
                 android:id="@+id/homerow_commentBtn"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:contentDescription="@string/image_desc"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/homerow_imageview"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/homerow_longTV"
                 app:srcCompat="@drawable/comments_icon" />
 
@@ -144,6 +158,13 @@
                 app:layout_constraintBottom_toBottomOf="@+id/homerow_likeButton"
                 app:layout_constraintStart_toEndOf="@+id/homerow_likeButton"
                 app:layout_constraintTop_toTopOf="@+id/homerow_likeButton" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.4987593" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

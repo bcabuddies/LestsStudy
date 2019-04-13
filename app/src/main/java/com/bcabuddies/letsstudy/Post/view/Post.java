@@ -64,6 +64,8 @@ public class Post extends AppCompatActivity implements PostView {
     ImageView homerowLikeButton;
     @BindView(R.id.homerow_likeCount)
     TextView homerowLikeCount;
+    @BindView(R.id.homerow_cmntCount)
+    TextView homerowCmntCount;
     private PostPresenterImpl presenter;
     private ArrayList<CommentData> commentList;
     private String postID;
@@ -73,8 +75,6 @@ public class Post extends AppCompatActivity implements PostView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
         ButterKnife.bind(this);
-
-        homerowCommentBtn.setVisibility(View.GONE);
 
         homerowMenu.setVisibility(View.GONE);
 
@@ -173,6 +173,11 @@ public class Post extends AppCompatActivity implements PostView {
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void setCommentCount(String count) {
+        homerowCmntCount.setText(count);
     }
 
     @Override

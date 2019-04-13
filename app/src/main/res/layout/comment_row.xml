@@ -68,4 +68,14 @@
         app:layout_constraintTop_toTopOf="@+id/cmnt_timeTV"
         app:srcCompat="@drawable/like_unselected" />
 
+    <TextView
+        android:id="@+id/cmnt_likeCountTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/likes"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cmnt_likeBtn"
+        app:layout_constraintStart_toEndOf="@+id/cmnt_likeBtn"
+        app:layout_constraintTop_toTopOf="@+id/cmnt_likeBtn" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

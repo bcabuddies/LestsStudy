@@ -82,8 +82,11 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
             notifyDataSetChanged();
         });
 
-        //check postLike
+        //check commentLike
         checkLike(postID, current_user, holder, commentID);
+
+        //check commentLike count
+        likeCount(postID, holder, commentID);
 
         holder.likeBtn.setOnClickListener(v -> {
             holder.likeBtn.setImageResource(R.drawable.like_selected);
@@ -123,6 +126,32 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
                 postLike = false;
                 Log.e(TAG, "checkLike: commentLike in else " + postLike + " comment id " + commentID);
                 like(current_user, postID, holder, commentID);
+            }
+        });
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void likeCount(String postID, ViewHolder holder, String commentID) {
+        //count no of likes
+        firebaseFirestore.collection("Posts").document(postID).collection("Comments")
+                .document(commentID).collection("Likes").addSnapshotListener((queryDocumentSnapshots, e) -> {
+            try {
+                if (!Objects.requireNonNull(queryDocumentSnapshots).isEmpty()) {
+                    int count = queryDocumentSnapshots.size();
+                    count = count - 1;
+                    if (count > 0) {
+                        holder.commentCountTV.setText("+" + count);
+                    } else {
+                        holder.commentCountTV.setText("1");
+                        Log.e(TAG, "likeCount: only 1 like by current user " + postID);
+                    }
+                } else {
+                    holder.commentCountTV.setText("");
+                    Log.e(TAG, "onEvent: no likes");
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                Log.e(TAG, "likeCount: exception getting like " + e1.getMessage());
             }
         });
     }
@@ -217,7 +246,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
     static class ViewHolder extends RecyclerView.ViewHolder {
         private View view;
         private CircleImageView profileView;
-        private TextView nameTV, timeTV;
+        private TextView nameTV, timeTV, commentCountTV;
         private ImageView deleteBtn, likeBtn;
 
         ViewHolder(@NonNull View itemView) {
@@ -229,6 +258,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
             timeTV = view.findViewById(R.id.cmnt_timeTV);
             deleteBtn = view.findViewById(R.id.cmnt_deleteBtn);
             likeBtn = view.findViewById(R.id.cmnt_likeBtn);
+            commentCountTV = view.findViewById(R.id.cmnt_likeCountTV);
         }
     }
 }

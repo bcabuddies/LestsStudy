@@ -83,6 +83,33 @@ public class PostPresenterImpl implements PostPresenter {
 
         //get like count
         likeCount(postID);
+
+        //get comment count
+       commentCount(postID);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void commentCount(String postID) {
+        firebaseFirestore.collection("Posts").document(postID).collection("Comments").addSnapshotListener((queryDocumentSnapshots, e) -> {
+            try {
+                String countText;
+                if (!Objects.requireNonNull(queryDocumentSnapshots).isEmpty()) {
+                    int count = queryDocumentSnapshots.size();
+                    if (count == 1)
+                        countText = count + " Comment";
+                    else
+                        countText = count + " Comments";
+                    Log.e(TAG, "commentCount: comments count " + count);
+                } else {
+                    countText = "No comments";
+                    Log.e(TAG, "commentCount: no comments");
+                }
+                postView.setCommentCount(countText);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                Log.e(TAG, "commentCount: exception getting comments " + e1.getMessage());
+            }
+        });
     }
 
     @SuppressLint("SetTextI18n")
@@ -143,7 +170,7 @@ public class PostPresenterImpl implements PostPresenter {
     @Override
     public void getComments() {
         Query sortComments = firebaseFirestore.collection("Posts").document(postID)
-                .collection("Comments").orderBy("timestamp", Query.Direction.DESCENDING);
+                .collection("Comments").orderBy("timestamp", Query.Direction.ASCENDING);
         commentDataList = new ArrayList<>();
 
         sortComments.addSnapshotListener((Activity) postView.getContext(), (queryDocumentSnapshots, e) -> {

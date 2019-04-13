@@ -11,4 +11,5 @@ public interface PostView extends BaseView {
     void setLike();
     void setLikeCount(int count);
     void setComments(ArrayList<CommentData> commentDataList);
+    void setCommentCount(String count);
 }
