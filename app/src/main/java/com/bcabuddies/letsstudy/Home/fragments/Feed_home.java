@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -56,9 +57,7 @@ public class Feed_home extends Fragment implements Feed_homeView {
 
     private final static String TAG = "Feed.java";
     private Feed_homePresenter presenter;
-    private FirebaseFirestore db;
     private FirebaseUser user;
-    private PostRecyclerAdapter postRecyclerAdapter;
     private ArrayList<PostData> postList;
     private static int firstVisibleInListview;
 
@@ -68,7 +67,7 @@ public class Feed_home extends Fragment implements Feed_homeView {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
@@ -77,7 +76,7 @@ public class Feed_home extends Fragment implements Feed_homeView {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        db = FirebaseFirestore.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         presenter = new Feed_homePresenterImpl(db);
         presenter.attachView(this);
@@ -116,7 +115,7 @@ public class Feed_home extends Fragment implements Feed_homeView {
 
     private void uploadText() {
         String text;
-        text = feedTextLayout.getEditText().getText().toString();
+        text = Objects.requireNonNull(feedTextLayout.getEditText()).getText().toString();
         if (textValidity(text)) {
             //sending data to presenter
             Bundle b = new Bundle();
@@ -136,7 +135,7 @@ public class Feed_home extends Fragment implements Feed_homeView {
         //getting user and post data from presenter
         postList = pData;
         Log.e(TAG, "getData: feed_home postlist size " + postList.size());
-        postRecyclerAdapter = new PostRecyclerAdapter(postList);
+        PostRecyclerAdapter postRecyclerAdapter = new PostRecyclerAdapter(postList);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setReverseLayout(true);
         mLayoutManager.setStackFromEnd(true);
@@ -207,13 +206,12 @@ public class Feed_home extends Fragment implements Feed_homeView {
     @Override
     public void uploadSuccess() {
         //no error uploading data
-        feedTextLayout.getEditText().setText(null);
+        Objects.requireNonNull(feedTextLayout.getEditText()).setText(null);
         feedTextLayout.getEditText().clearFocus();
     }
 
     public static Fragment newInstance() {
-        Feed_home fragment = new Feed_home();
-        return fragment;
+        return new Feed_home();
 
     }
 }

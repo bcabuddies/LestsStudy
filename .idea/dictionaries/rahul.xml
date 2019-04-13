@@ -4,6 +4,7 @@
       <w>bcabuddies</w>
       <w>btnregister</w>
       <w>cmnt</w>
+      <w>dateformat</w>
       <w>edittext</w>
       <w>firebase</w>
       <w>firestore</w>
@@ -11,6 +12,8 @@
       <w>homerow</w>
       <w>imageview</w>
       <w>letsstudy</w>
+      <w>listview</w>
+      <w>mmddyyyy</w>
       <w>nname</w>
     </words>
   </dictionary>

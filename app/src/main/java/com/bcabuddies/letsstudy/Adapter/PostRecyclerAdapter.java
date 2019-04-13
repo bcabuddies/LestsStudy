@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bcabuddies.letsstudy.Model.PostData;
 import com.bcabuddies.letsstudy.Post.view.Post;
@@ -26,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -36,6 +38,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
 
     private ArrayList<PostData> postList;
 
+    @SuppressLint("StaticFieldLeak")
     public static Context context;
     private static final String TAG = "PostRecAdapter";
     private FirebaseFirestore firebaseFirestore;
@@ -87,7 +90,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         //this will retrieve user data at for each position
         firebaseFirestore.collection("Users").document(postUserId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                String fName = task.getResult().getString("name");
+                String fName = Objects.requireNonNull(task.getResult()).getString("name");
                 String profUrl = task.getResult().getString("profileURL");
                 holder.setNameTV(fName);
                 holder.setProf(profUrl);
@@ -119,8 +122,8 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
     private void postMenu(String postID, String current_user, String postUserId, ViewHolder holder) {
         PopupMenu popupMenu = new PopupMenu(context, holder.postMenu);
         popupMenu.getMenuInflater().inflate(R.menu.empty_menu, popupMenu.getMenu());
-        String menuListOwn[] = {"Delete"};
-        String menuListUser[] = {"Report"};
+        String menuListOwn[] = {"Delete", "Dislike"};
+        String menuListUser[] = {"Report", "Dislike"};
 
         if (current_user.equals(postUserId)) {
             for (String s : menuListOwn) {
@@ -133,12 +136,87 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
                 Log.e(TAG, "pursuingMenu: s " + s);
             }
         }
+
+        popupMenu.setOnMenuItemClickListener(item -> {
+
+            String title = item.getTitle().toString();
+
+            switch (title) {
+                case "dislike":
+                    negativeLike(postID, current_user);
+                    break;
+                case "Report":
+                    report(postID, current_user);
+                    break;
+                case "Delete":
+                    deletePost(postID, postUserId);
+                    break;
+            }
+
+            return true;
+        });
+
         popupMenu.show();
+    }
+
+    private void deletePost(String postID, String postUserId) {
+        //to delete the post
+        try {
+            firebaseFirestore.collection("Posts").document(postID).delete().addOnCompleteListener(task -> {
+                if (task.isComplete()) {
+                    Log.e(TAG, "deletePost: post deleted ");
+
+                    //deleting post will -10 points
+                    firebaseFirestore.collection("Users").document(postUserId).get().addOnCompleteListener(task1 -> {
+                        if (Objects.requireNonNull(task1.getResult()).exists()) {
+                            long points = (long) task1.getResult().get("points");
+                            Log.e(TAG, "onBindViewHolder: points before removing 10 " + points);
+                            points = points - 10;
+                            Log.e(TAG, "onBindViewHolder: points after removing 10 " + points);
+
+                            HashMap<String, Object> data = new HashMap<>();
+                            data.put("points", points);
+
+                            firebaseFirestore.collection("Users").document(postUserId).update(data).addOnCompleteListener(task2 -> {
+                                if (task2.isSuccessful()) {
+                                    Log.e(TAG, "onBindViewHolder: points removed ");
+                                } else {
+                                    Log.e(TAG, "onBindViewHolder: points not added error " + Objects.requireNonNull(task2.getException()).getMessage());
+                                }
+                            });
+                        }
+                    });
+                    Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT).show();
+                    notifyDataSetChanged();
+                } else {
+                    Toast.makeText(context, "Error deleting post", Toast.LENGTH_SHORT).show();
+                    notifyDataSetChanged();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "deletePost: exception "+e.getMessage() );
+        }
+    }
+
+    private void report(String postID, String current_user) {
+        //to report the post
+    }
+
+    private void negativeLike(String postID, String current_user) {
+        //give negative points to the post
+        firebaseFirestore.collection("Posts").document(postID).collection("Dislike").document(current_user).get().addOnCompleteListener(task -> {
+            if (Objects.requireNonNull(task.getResult()).exists()) {
+                Log.e(TAG, "negativeLike: disliked ");
+            } else {
+                Log.e(TAG, "negativeLike: error in disliking");
+            }
+        });
     }
 
     private void checkLike(String postID, String current_user, ViewHolder holder) {
         firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).get().addOnCompleteListener(task -> {
-            if (task.getResult().exists()) {
+            if (Objects.requireNonNull(task.getResult()).exists()) {
                 postLike = true;
                 holder.likeCard.setImageResource(R.drawable.like_selected);
                 holder.likeCard.setImageTintList(context.getResources().getColorStateList(R.color.like_pink));
@@ -153,7 +231,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
 
     private void likeFeature(String postID, String current_user, ViewHolder holder, String postUserId) {
         firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).get().addOnCompleteListener(task -> {
-            if (task.getResult().exists()) {
+            if (Objects.requireNonNull(task.getResult()).exists()) {
                 postLike = true;
                 holder.likeCard.setImageResource(R.drawable.like_selected);
                 holder.likeCard.setImageTintList(context.getResources().getColorStateList(R.color.like_pink));
@@ -185,7 +263,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
 
                 //removing points
                 firebaseFirestore.collection("Users").document(postUserId).get().addOnCompleteListener(task1 -> {
-                    if (task1.getResult().exists()) {
+                    if (Objects.requireNonNull(task1.getResult()).exists()) {
                         long points = (long) task1.getResult().get("points");
                         Log.e(TAG, "onBindViewHolder: points before removing 10 " + points);
                         points = points - 10;
@@ -198,7 +276,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
                             if (task2.isSuccessful()) {
                                 Log.e(TAG, "onBindViewHolder: points removed ");
                             } else {
-                                Log.e(TAG, "onBindViewHolder: points not added error " + task2.getException().getMessage());
+                                Log.e(TAG, "onBindViewHolder: points not added error " + Objects.requireNonNull(task2.getException()).getMessage());
                             }
                         });
                     }
@@ -222,7 +300,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
 
                     //adding points
                     firebaseFirestore.collection("Users").document(postUserId).get().addOnCompleteListener(task1 -> {
-                        if (task1.getResult().exists()) {
+                        if (Objects.requireNonNull(task1.getResult()).exists()) {
                             long points = (long) task1.getResult().get("points");
                             Log.e(TAG, "onBindViewHolder: points before adding 10 " + points);
                             points = points + 10;
@@ -235,7 +313,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
                                 if (task2.isSuccessful()) {
                                     Log.e(TAG, "onBindViewHolder: points added ");
                                 } else {
-                                    Log.e(TAG, "onBindViewHolder: points not added error " + task2.getException().getMessage());
+                                    Log.e(TAG, "onBindViewHolder: points not added error " + Objects.requireNonNull(task2.getException()).getMessage());
                                 }
                             });
                         }
