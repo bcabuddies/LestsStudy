@@ -6,6 +6,8 @@ import android.widget.Toast;
 
 import com.bcabuddies.letsstudy.Model.CommentData;
 import com.bcabuddies.letsstudy.Post.view.PostView;
+import com.bcabuddies.letsstudy.R;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,10 +25,12 @@ public class PostPresenterImpl implements PostPresenter {
     private final static String TAG = "PostPresenterImpl.java";
     private PostView postView;
     private ArrayList<CommentData> commentDataList;
+    private FirebaseUser user;
 
-    public PostPresenterImpl(String postID, FirebaseFirestore firebaseFirestore) {
+    public PostPresenterImpl(String postID, FirebaseFirestore firebaseFirestore, FirebaseUser user) {
         this.postID = postID;
         this.firebaseFirestore = firebaseFirestore;
+        this.user = user;
     }
 
     @Override
@@ -71,6 +75,17 @@ public class PostPresenterImpl implements PostPresenter {
 
             } else {
                 Log.e(TAG, "getPost: no post found ");
+            }
+        });
+
+        getLikes();
+    }
+
+    private void getLikes() {
+        firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(user.getUid()).get().addOnCompleteListener(task -> {
+            if (task.getResult().exists()) {
+                postView.setLike();
+                Log.e(TAG, "checkLike: post is already liked by user " + postID);
             }
         });
     }

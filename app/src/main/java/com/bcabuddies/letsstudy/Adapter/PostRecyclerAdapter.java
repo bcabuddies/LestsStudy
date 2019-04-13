@@ -32,8 +32,6 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static android.view.View.GONE;
-
 public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapter.ViewHolder> {
 
     private ArrayList<PostData> postList;
@@ -142,10 +140,8 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).get().addOnCompleteListener(task -> {
             if (task.getResult().exists()) {
                 postLike = true;
-                holder.likeTV.setVisibility(GONE);
-                holder.likeIcon.setVisibility(GONE);
-                holder.likedIcon.setVisibility(View.VISIBLE);
-                holder.likedTV.setVisibility(View.VISIBLE);
+                holder.likeCard.setImageResource(R.drawable.like_selected);
+                holder.likeCard.setImageTintList(context.getResources().getColorStateList(R.color.like_pink));
                 Log.e(TAG, "checkLike: post is already liked by user " + postID);
                 Log.e(TAG, "checkLike: postLike " + postLike + " post id " + postID);
             } else {
@@ -159,10 +155,8 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).get().addOnCompleteListener(task -> {
             if (task.getResult().exists()) {
                 postLike = true;
-                holder.likeTV.setVisibility(GONE);
-                holder.likeIcon.setVisibility(GONE);
-                holder.likedIcon.setVisibility(View.VISIBLE);
-                holder.likedTV.setVisibility(View.VISIBLE);
+                holder.likeCard.setImageResource(R.drawable.like_selected);
+                holder.likeCard.setImageTintList(context.getResources().getColorStateList(R.color.like_pink));
                 Log.e(TAG, "checkLike: post is already liked by user " + postID);
                 Log.e(TAG, "checkLike: postLike " + postLike + " post id " + postID);
                 dislike(current_user, postID, holder, postUserId);
@@ -184,10 +178,8 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).delete().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Log.e(TAG, "dislike: like deleted ");
-                holder.likeTV.setVisibility(View.VISIBLE);
-                holder.likeIcon.setVisibility(View.VISIBLE);
-                holder.likedIcon.setVisibility(GONE);
-                holder.likedTV.setVisibility(GONE);
+                holder.likeCard.setImageResource(R.drawable.like_unselected);
+                holder.likeCard.setImageTintList(context.getResources().getColorStateList(R.color.black));
 
                 postLike = false;
 
@@ -222,10 +214,8 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         try {
             firebaseFirestore.collection("Posts").document(postID).collection("Likes").document(current_user).set(map).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    holder.likeTV.setVisibility(GONE);
-                    holder.likeIcon.setVisibility(GONE);
-                    holder.likedIcon.setVisibility(View.VISIBLE);
-                    holder.likedTV.setVisibility(View.VISIBLE);
+                    holder.likeCard.setImageResource(R.drawable.like_selected);
+                    holder.likeCard.setImageTintList(context.getResources().getColorStateList(R.color.like_pink));
                     Log.e(TAG, "onComplete: like by" + current_user);
 
                     postLike = true;
@@ -290,11 +280,8 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         private TextView descTV;
         private TextView nameTV;
         private TextView dateTV;
-        private TextView likeTV;
-        private TextView likedTV;
-        private ImageView likeIcon, likedIcon;
         private CircleImageView prof;
-        private CardView likeCard;
+        private ImageView likeCard;
         private ImageView postMenu;
         private CardView postCard;
         private TextView longPost;
@@ -306,12 +293,8 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             descTV = mView.findViewById(R.id.homerow_descTV);
             nameTV = mView.findViewById(R.id.homerow_nameTV);
             dateTV = mView.findViewById(R.id.homerow_dateTV);
-            likeTV = mView.findViewById(R.id.homerow_likeTV);
-            likedTV = mView.findViewById(R.id.homerow_likedTV);
-            likeIcon = mView.findViewById(R.id.homerow_likeIcon);
-            likedIcon = mView.findViewById(R.id.homerow_likedIcon);
             prof = mView.findViewById(R.id.homerow_prof);
-            likeCard = mView.findViewById(R.id.homerow_likecard);
+            likeCard = mView.findViewById(R.id.homerow_likeButton);
             postMenu = mView.findViewById(R.id.homerow_menu);
             postCard = mView.findViewById(R.id.homerow_postCard);
             longPost = mView.findViewById(R.id.homerow_longTV);

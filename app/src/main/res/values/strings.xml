@@ -39,4 +39,8 @@
     <string name="name_and_comment">Name and Comment</string>
     <string name="delete_button">delete button</string>
     <string name="comment_like_btn">comment like btn</string>
+    <string name="hello_sample_name">Hello Sample Name</string>
+    <string name="image_desc">image desc</string>
+    <string name="hello_sample_date">Hello Sample Date</string>
+    <string name="hello_sample_description">Hello Sample Description</string>
 </resources>

@@ -18,6 +18,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -26,7 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -47,10 +47,6 @@ public class Post extends AppCompatActivity implements PostView {
     TextView homerowDescTV;
     @BindView(R.id.homerow_imageview)
     ImageView homerowImageView;
-    @BindView(R.id.homerow_likecard)
-    CardView homerowLikeCard;
-    @BindView(R.id.homerow_cmntcard)
-    CardView homerowCmntcard;
     @BindView(R.id.comment_editText)
     TextInputEditText commentEditText;
     @BindView(R.id.comment_Layout)
@@ -61,9 +57,12 @@ public class Post extends AppCompatActivity implements PostView {
     RecyclerView recyclerView;
 
     private final static String TAG = "Post.java";
+    @BindView(R.id.homerow_commentBtn)
+    ImageView homerowCommentBtn;
+    @BindView(R.id.homerow_likeButton)
+    ImageView homerowLikeButton;
     private PostPresenterImpl presenter;
     private ArrayList<CommentData> commentList;
-    private CommentRecyclerAdapter adapter;
     private String postID;
 
     @Override
@@ -72,8 +71,8 @@ public class Post extends AppCompatActivity implements PostView {
         setContentView(R.layout.activity_post);
         ButterKnife.bind(this);
 
-        homerowCmntcard.setVisibility(View.GONE);
-        homerowLikeCard.setVisibility(View.GONE);
+        homerowCommentBtn.setVisibility(View.GONE);
+
         homerowMenu.setVisibility(View.GONE);
 
         try {
@@ -82,8 +81,9 @@ public class Post extends AppCompatActivity implements PostView {
 
             FirebaseApp.initializeApp(this);
             FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-            presenter = new PostPresenterImpl(postID, firestore);
+            presenter = new PostPresenterImpl(postID, firestore, user);
             presenter.attachView(this);
             presenter.getPost();
             presenter.getComments();
@@ -146,10 +146,16 @@ public class Post extends AppCompatActivity implements PostView {
     }
 
     @Override
+    public void setLike() {
+        homerowLikeButton.setImageResource(R.drawable.like_selected);
+        homerowLikeButton.setImageTintList(getResources().getColorStateList(R.color.like_pink));
+    }
+
+    @Override
     public void setComments(ArrayList<CommentData> commentDataList) {
         //send data to Adapter
         commentList = commentDataList;
-        adapter = new CommentRecyclerAdapter(commentList);
+        CommentRecyclerAdapter adapter = new CommentRecyclerAdapter(commentList);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(adapter);

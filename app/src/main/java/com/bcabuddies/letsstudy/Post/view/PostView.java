@@ -8,6 +8,6 @@ import java.util.HashMap;
 
 public interface PostView extends BaseView {
     void setPost(HashMap<String, Object> dataMap);
-
+    void setLike();
     void setComments(ArrayList<CommentData> commentDataList);
 }
