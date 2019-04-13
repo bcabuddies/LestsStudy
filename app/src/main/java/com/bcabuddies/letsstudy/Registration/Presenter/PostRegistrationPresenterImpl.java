@@ -4,17 +4,13 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.bcabuddies.letsstudy.Registration.view.PostRegistrationView;
-import com.bcabuddies.letsstudy.utils.Utils;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Arrays;
 import java.util.HashMap;
-
-import androidx.annotation.NonNull;
+import java.util.Objects;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
@@ -25,7 +21,6 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
     private FirebaseUser user;
     private StorageReference thumbImgRef;
     private Uri thumb_downloadUrl = null;
-    private Task<Uri> getDownloadUri;
 
     public PostRegistrationPresenterImpl(FirebaseFirestore db, FirebaseUser user, StorageReference thumbImgRef) {
         this.db = db;
@@ -41,20 +36,20 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
         } else if (thumb_downloadUrl == null) {                                     //if user did not sign in using google or facebook
             Log.e(TAG, "uploadData: else if");
             if (!(profileUri == null)) {                                            //if user did not upload custom image
-                thumb_downloadUrl = thumb_downloadUrl.parse(profileUri);
+                thumb_downloadUrl = Uri.parse(profileUri);
                 Log.e(TAG, "uploadData: else if- if" + profileUri);
-                detailsUpload(name, age, profileUri, pursuing, thumb_downloadUrl);
+                detailsUpload(name, age, pursuing, thumb_downloadUrl);
             } else {                                                                  //if there is no profile pic at the end
                 Log.e(TAG, "uploadData: else if- else" + thumb_downloadUrl);
-                thumb_downloadUrl = thumb_downloadUrl.parse("https://firebasestorage.googleapis.com/v0/b/fitsteps-311ed.appspot.com/o/default_user_thumb%2Fdefault.png?alt=media&token=c2de219c-9430-48bf-84c1-b2ba0b37be66");
-                detailsUpload(name, age, profileUri, pursuing, thumb_downloadUrl);
+                thumb_downloadUrl = Uri.parse("https://firebasestorage.googleapis.com/v0/b/fitsteps-311ed.appspot.com/o/default_user_thumb%2Fdefault.png?alt=media&token=c2de219c-9430-48bf-84c1-b2ba0b37be66");
+                detailsUpload(name, age, pursuing, thumb_downloadUrl);
             }
         } else {                                                                    //if user sing in using google or fb
-            detailsUpload(name, age, profileUri, pursuing, thumb_downloadUrl);
+            detailsUpload(name, age, pursuing, thumb_downloadUrl);
         }
     }
 
-    private void detailsUpload(String name, String age, String profileUri, String pursuing, Uri thumb_downloadUrl) {
+    private void detailsUpload(String name, String age, String pursuing, Uri thumb_downloadUrl) {
         String uid = user.getUid();
         HashMap<String, Object> data = new HashMap<>();
         data.put("name", name);
@@ -62,15 +57,15 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
         data.put("profileURL", thumb_downloadUrl.toString());
         data.put("pursuing", pursuing);
         data.put("uid", uid);
-        data.put("points",100 );
-        data.put("first","yes" );
+        data.put("points", 100);
+        data.put("first", "yes");
         Log.e(TAG, "uploadData: data ready to upload " + data);
         try {
             db.collection("Users").document(uid).set(data).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     postRegView.detailUploadSuccess();
                 } else {
-                    postRegView.detailsUploadError(task.getException().getMessage());
+                    postRegView.detailsUploadError(Objects.requireNonNull(task.getException()).getMessage());
                     Log.e(TAG, "onComplete:try:  " + task.getException());
                 }
             });
@@ -84,12 +79,12 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
     public void getMenu() {
         Log.e(TAG, "getMenu: get menu started ");
         db.collection("PreData").document("Education").get().addOnCompleteListener(task -> {
-            if (task.getResult().exists()) {
+            if (Objects.requireNonNull(task.getResult()).exists()) {
                 Log.e(TAG, "getMenu: data found ");
                 String menu_item = task.getResult().getString("menu");
                 Log.e(TAG, "getMenu: data " + menu_item);
-                String[] parts = menu_item.split(", ");
-                Log.e(TAG, "getMenu: " + parts);
+                String[] parts = Objects.requireNonNull(menu_item).split(", ");
+                Log.e(TAG, "getMenu: " + Arrays.toString(parts));
                 postRegView.pursuingMenu(parts);
             } else {
                 //no data
@@ -99,37 +94,32 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
     }
 
     public void firebaseDataPre() {
-        db.collection("Users").document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.getResult().exists()) {
-                    String profUrl;
-                    profUrl = task.getResult().getString("profileURL");
-                    if (profUrl == null) {
-                        //  profUrl = "https://firebasestorage.googleapis.com/v0/b/letsstudy-c77c3.appspot.com/o/user_defalut_profile%2Fdefault.png?alt=media&token=027c4d7f-8452-4ff9-a4c7-263b77254bd0";
-                        profUrl = "";
-                    }
-                    String name = task.getResult().getString("name");
-                    String courseName = task.getResult().getString("pursuing");
-                    String age = task.getResult().getString("age");
-                    Log.e(TAG, "onComplete: firebasepredata: proff " + profUrl);
-                    postRegView.firebasePreData(name, profUrl, courseName, age);
-                    Log.e(TAG, "onComplete: firebasedatapre : " + name + "    " + profUrl + "    " + courseName);
-                } else {
-                    Log.e(TAG, "onComplete: firebasepredata: no data");
+        db.collection("Users").document(user.getUid()).get().addOnCompleteListener(task -> {
+            if (Objects.requireNonNull(task.getResult()).exists()) {
+                String profUrl;
+                profUrl = task.getResult().getString("profileURL");
+                if (profUrl == null) {
+                    //  profUrl = "https://firebasestorage.googleapis.com/v0/b/letsstudy-c77c3.appspot.com/o/user_defalut_profile%2Fdefault.png?alt=media&token=027c4d7f-8452-4ff9-a4c7-263b77254bd0";
+                    profUrl = "";
                 }
+                String name = task.getResult().getString("name");
+                String courseName = task.getResult().getString("pursuing");
+                String age = task.getResult().getString("age");
+                Log.e(TAG, "onComplete: firebasepredata: prof " + profUrl);
+                postRegView.firebasePreData(name, profUrl, courseName, age);
+                Log.e(TAG, "onComplete: firebasedatapre : " + name + "    " + profUrl + "    " + courseName);
+            } else {
+                Log.e(TAG, "onComplete: firebasepredata: no data");
             }
         });
     }
 
     public void imagePost(byte[] thumb_byte) {
         final StorageReference thumb_filePath = thumbImgRef.child(user.getUid() + ".jpg");
-        thumb_filePath.putBytes(thumb_byte).addOnSuccessListener(taskSnapshot -> {
-            getDownloadUri = taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(uri -> {
-                thumb_downloadUrl = uri;
-                Log.e("mkey", "thumb download url: " + thumb_downloadUrl);
-            });
-        });
+        thumb_filePath.putBytes(thumb_byte).addOnSuccessListener(taskSnapshot -> Objects.requireNonNull(Objects.requireNonNull(taskSnapshot.getMetadata()).getReference()).getDownloadUrl().addOnSuccessListener(uri -> {
+            thumb_downloadUrl = uri;
+            Log.e("mKey", "thumb download url: " + thumb_downloadUrl);
+        }));
     }
 
     @Override

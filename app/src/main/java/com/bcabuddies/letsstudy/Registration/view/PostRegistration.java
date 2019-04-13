@@ -14,7 +14,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bcabuddies.letsstudy.Home.view.MainActivity;
-import com.bcabuddies.letsstudy.Login.view.LoginSplash;
 import com.bcabuddies.letsstudy.R;
 import com.bcabuddies.letsstudy.Registration.Presenter.PostRegistrationPresenterImpl;
 import com.bcabuddies.letsstudy.utils.Utils;
@@ -33,8 +32,10 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -70,7 +71,6 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     private PopupMenu popup;
     private final static String TAG = "PostRegistration.java";
     private String profile;
-    private final Calendar myCalendar = Calendar.getInstance();
     private Bitmap thumb_Bitmap = null;
 
     @Override
@@ -85,28 +85,6 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         StorageReference thumbImgRef = FirebaseStorage.getInstance().getReference().child("Thumb_images");
 
-      /*  //if name found user is not coming again and not the first time
-        try {
-            String name = user.getDisplayName();
-            Bundle data = getIntent().getBundleExtra("data");
-            String dataName = data.getString("name");
-            Log.e(TAG, "onCreate: name = " + name);
-            Log.e(TAG, "onCreate: dataName = " + data.getString("name"));
-
-            if (!name.isEmpty() && dataName.isEmpty()) {
-                Log.e(TAG, "onCreate: found name " + name);
-                Intent loginSplashIntent = new Intent(PostRegistration.this, LoginSplash.class);
-                loginSplashIntent.putExtra("name", name);
-                startActivity(loginSplashIntent);
-                finish();
-            } else {
-                Log.e(TAG, "onCreate: Nothing found in name but in dataName");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, "onCreate: name is null exception " + e.getMessage());
-        }*/
-
         try {
             progressBar.setVisibility(View.VISIBLE);
             String fName = this.getIntent().getBundleExtra("data").getString("name");
@@ -115,7 +93,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
             try {
                 String age = this.getIntent().getBundleExtra("data").getString("age");
                 String course = this.getIntent().getBundleExtra("data").getString("course");
-                Log.e(TAG, "onCreate: postreg age"+age+"  course: "+course );
+                Log.e(TAG, "onCreate: postreg age" + age + "  course: " + course);
                 preSettingsData(age, course);
                 progressBar.setVisibility(View.GONE);
             } catch (Exception e) {
@@ -140,23 +118,23 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         presenter.getMenu();
     }
 
-    private void updateLabel() {
+    private void updateLabel(Calendar myCalendar) {
         progressBar.setVisibility(View.GONE);
-        String myFormat = "MM/dd/yy"; //In which you need put here
+        String myFormat = "dd/MM/yyyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-        postRegAgeLayout.getEditText().setText(sdf.format(myCalendar.getTime()));
+        Objects.requireNonNull(postRegAgeLayout.getEditText()).setText(sdf.format(myCalendar.getTime()));
     }
 
     private void preData(String name, String profile) {
         progressBar.setVisibility(View.GONE);
-        postRegNameLayout.getEditText().setText(name);
+        Objects.requireNonNull(postRegNameLayout.getEditText()).setText(name);
         Glide.with(this).load(profile)
                 .into(postRegProfileView);
     }
 
     private void preSettingsData(String age, String course) {
         progressBar.setVisibility(View.GONE);
-        postRegAgeLayout.getEditText().setText(age);
+        Objects.requireNonNull(postRegAgeLayout.getEditText()).setText(age);
         postRegInPursuing.setText(course);
     }
 
@@ -180,7 +158,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     @Override
     public void detailUploadSuccess() {
         progressBar.setVisibility(View.GONE);
-        Utils.showMessage(this, "Welcome " + postRegNameLayout.getEditText().getText().toString());
+        Utils.showMessage(this, "Welcome " + Objects.requireNonNull(postRegNameLayout.getEditText()).getText().toString());
         Utils.setIntent(this, MainActivity.class);
         finish();
     }
@@ -194,7 +172,7 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     @Override
     public void pursuingMenu(String[] list) {
         //pass data to menu items
-        Log.e(TAG, "pursuingMenu: menu data received " + list);
+        Log.e(TAG, "pursuingMenu: menu data received " + Arrays.toString(list));
         for (String s : list) {
             popup.getMenu().add(s);
             Log.e(TAG, "pursuingMenu: s " + s);
@@ -205,8 +183,8 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     public void firebasePreData(String name, String profUrl, String courseName, String age) {
         if (!(name == null || profUrl == null || courseName == null || age == null)) {
             Glide.with(this).load(profUrl).into(postRegProfileView);
-            postRegNameLayout.getEditText().setText(name);
-            postRegAgeLayout.getEditText().setText(age);
+            Objects.requireNonNull(postRegNameLayout.getEditText()).setText(name);
+            Objects.requireNonNull(postRegAgeLayout.getEditText()).setText(age);
             postRegInPursuing.setText(courseName);
         } else {
             Toast.makeText(this, "no data", Toast.LENGTH_SHORT).show();
@@ -244,10 +222,10 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
     private void uploadData() {
         progressBar.setVisibility(View.VISIBLE);
         presenter.uploadData(
-                postRegNameLayout.getEditText().getText().toString(),
-                postRegAgeLayout.getEditText().getText().toString(),
+                Objects.requireNonNull(postRegNameLayout.getEditText()).getText().toString(),
+                Objects.requireNonNull(postRegAgeLayout.getEditText()).getText().toString(),
                 profile,
-                postRegInPursuing.getText().toString()
+                Objects.requireNonNull(postRegInPursuing.getText()).toString()
         );
         progressBar.setVisibility(View.GONE);
     }
@@ -275,18 +253,39 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
 
     private void ageUpdate() {
         //need to add Calender to select age
-        final Calendar myCalendar = Calendar.getInstance();
-        DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
-            // TODO Auto-generated method stub
-            myCalendar.set(Calendar.YEAR, year);
-            myCalendar.set(Calendar.MONTH, monthOfYear);
-            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            updateLabel();
-        };
+        if (!Objects.requireNonNull(postRegAgeET.getText()).toString().isEmpty()){
+            String age = postRegAgeET.getText().toString();
+            Log.e(TAG, "ageUpdate: age = "+age );
+            String[] ageSplit = age.split("/");
 
-        new DatePickerDialog(this, date, myCalendar
-                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            String dayPre = ageSplit[0];
+            String monthPre = ageSplit[1];
+            String yearPre = ageSplit[2];
+
+            Log.e(TAG, "ageUpdate: in string day month year "+dayPre+monthPre+yearPre );
+
+            final Calendar myCalendar = Calendar.getInstance();
+            DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabel(myCalendar);
+            };
+            new DatePickerDialog(this, date, Integer.parseInt(yearPre), Integer.parseInt(monthPre) - 1,
+                    Integer.parseInt(dayPre)).show();
+
+        } else {
+            final Calendar myCalendar = Calendar.getInstance();
+            DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabel(myCalendar);
+            };
+            new DatePickerDialog(this, date, myCalendar
+                    .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                    myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        }
     }
 
     @Override
@@ -295,8 +294,8 @@ public class PostRegistration extends AppCompatActivity implements PostRegistrat
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                Uri mainImageUri = result.getUri();
-                Log.v("mkeyreg", "mianuri= " + mainImageUri);
+                Uri mainImageUri = Objects.requireNonNull(result).getUri();
+                Log.v("mKeyReg", "mainUri= " + mainImageUri);
                 File thumb_filePathUri = new File(mainImageUri.getPath());
                 try {
                     thumb_Bitmap = new Compressor(this).setMaxWidth(400).setMaxHeight(400).setQuality(50).compressToBitmap(thumb_filePathUri);

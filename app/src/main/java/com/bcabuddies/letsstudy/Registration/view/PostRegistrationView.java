@@ -12,7 +12,4 @@ public interface PostRegistrationView extends BaseView {
     void pursuingMenu(String[] list);
 
     void firebasePreData(String name,String profUrl, String courseName,String age);
-
-
-
 }
