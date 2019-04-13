@@ -57,22 +57,49 @@ public class PostRegistrationPresenterImpl implements PostRegistrationPresenter 
         data.put("profileURL", thumb_downloadUrl.toString());
         data.put("pursuing", pursuing);
         data.put("uid", uid);
-        data.put("points", 100);
-        data.put("first", "yes");
-        Log.e(TAG, "uploadData: data ready to upload " + data);
-        try {
-            db.collection("Users").document(uid).set(data).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    postRegView.detailUploadSuccess();
+
+        db.collection("Users").document(uid).get().addOnCompleteListener(task -> {
+            try {
+                if (Objects.requireNonNull(task.getResult()).exists()) {
+                    Log.e(TAG, "detailsUpload: data exists" );
+                    try {
+                        Log.e(TAG, "detailsUpload: data exists and in try of update " );
+                        db.collection("Users").document(uid).update(data).addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                postRegView.detailUploadSuccess();
+                            } else {
+                                postRegView.detailsUploadError(Objects.requireNonNull(task.getException()).getMessage());
+                                Log.e(TAG, "onComplete:try:  " + task1.getException());
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onClick: error " + e.getMessage());
+                    }
                 } else {
-                    postRegView.detailsUploadError(Objects.requireNonNull(task.getException()).getMessage());
-                    Log.e(TAG, "onComplete:try:  " + task.getException());
+                    Log.e(TAG, "detailsUpload: no data exists " );
+                    try {
+                        Log.e(TAG, "detailsUpload: no data exists and in try of set " );
+                        db.collection("Users").document(uid).set(data).addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                postRegView.detailUploadSuccess();
+                            } else {
+                                postRegView.detailsUploadError(Objects.requireNonNull(task.getException()).getMessage());
+                                Log.e(TAG, "onComplete:try:  " + task1.getException());
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onClick: error " + e.getMessage());
+                    }
                 }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, "onClick: error " + e.getMessage());
-        }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e(TAG, "detailsUpload: exception in points " + e.getMessage());
+            }
+        });
+
+        Log.e(TAG, "uploadData: data ready to upload " + data);
     }
 
     @Override

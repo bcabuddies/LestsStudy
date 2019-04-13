@@ -1,5 +1,6 @@
 package com.bcabuddies.letsstudy.Home.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -70,10 +71,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
 
     private HomePresenter presenter;
     private FirebaseAuth auth;
-    private FirebaseUser user;
-    private FirebaseFirestore db;
 
-    private Unbinder bind;
     //fragments
     private Fragment fragment = null;
 
@@ -86,8 +84,8 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
 
         homeNav.setNavigationItemSelectedListener(this);
         auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-        user = auth.getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
 
         presenter = new HomePresenterImpl(auth, db);
         presenter.attachView(this);
@@ -130,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         Glide.with(this).load(profileURL).into(homeUserProfileView);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void getUserPoints(Bundle userPoints) {
         homeUserStudyPointText = findViewById(R.id.home_user_studyPointText);
@@ -168,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements HomeView, Navigat
         return true;
     }
 
+    @SuppressLint("RtlHardcoded")
     @OnClick({R.id.feed_bNav, R.id.prep_bNav, R.id.test_bNav, R.id.explore_bNav, R.id.topMenu_topNav, R.id.noti_topNav})
     public void onViewClicked(View view) {
         switch (view.getId()) {

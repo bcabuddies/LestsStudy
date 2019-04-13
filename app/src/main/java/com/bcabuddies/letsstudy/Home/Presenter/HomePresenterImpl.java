@@ -59,7 +59,7 @@ public class HomePresenterImpl implements HomePresenter {
                 Long points = (Long) task.getResult().get("points");
                 Log.e(TAG, "onComplete: firebasepredata: prof " + profUrl);
                 Log.e(TAG, "onComplete: firebasedatapre : " + name + "    " + profUrl + "    " + courseName);
-                homeView.firebaseData(profUrl, name, age, courseName, points);
+                homeView.firebaseData(profUrl, name, age, courseName, Objects.requireNonNull(points));
             } else {
                 Log.e(TAG, "onComplete: firebasepredata: no data");
             }
@@ -70,12 +70,16 @@ public class HomePresenterImpl implements HomePresenter {
     public void userPoints(FirebaseUser user) {
         try {
             firebaseFirestore.collection("Users").document(user.getUid()).addSnapshotListener((documentSnapshot, e) -> {
-                if (documentSnapshot != null && documentSnapshot.exists()) {
-                    Bundle data = new Bundle();
-
-                    data.putLong("points", (Long) documentSnapshot.getData().get("points"));
-                    Log.e(TAG, "onEvent: points" + documentSnapshot.getData().get("points"));
-                    homeView.getUserPoints(data);
+                try {
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                        Bundle data = new Bundle();
+                        data.putLong("points", (Long) Objects.requireNonNull(documentSnapshot.getData()).get("points"));
+                        Log.e(TAG, "onEvent: points" + documentSnapshot.getData().get("points"));
+                        homeView.getUserPoints(data);
+                    }
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                    Log.e(TAG, "userPoints: exception in getting points "+e1.getMessage() );
                 }
             });
         } catch (Exception e) {
