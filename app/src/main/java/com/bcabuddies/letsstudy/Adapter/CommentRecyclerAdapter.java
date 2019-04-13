@@ -15,11 +15,14 @@ import com.bcabuddies.letsstudy.R;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,10 +33,11 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
     private ArrayList<CommentData> cmntList;
 
     private static final String TAG = "CommentAdapter.java";
+    @SuppressLint("StaticFieldLeak")
     private static Context context;
     private FirebaseFirestore firebaseFirestore;
     private FirebaseUser user;
-    private int resource = R.layout.comment_row;
+    private boolean postLike = false;
 
     public CommentRecyclerAdapter(ArrayList<CommentData> cmntList) {
         this.cmntList = cmntList;
@@ -42,6 +46,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        int resource = R.layout.comment_row;
         View view = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
         context = parent.getContext();
 
@@ -77,16 +82,83 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
             notifyDataSetChanged();
         });
 
-        likeFeature(holder);
+        //check postLike
+        checkLike(postID, current_user, holder, commentID);
 
         holder.likeBtn.setOnClickListener(v -> {
             holder.likeBtn.setImageResource(R.drawable.like_selected);
             holder.likeBtn.setImageTintList(context.getResources().getColorStateList(R.color.like_pink));
+            likeFeature(holder, postID, current_user, commentID);
         });
     }
 
-    private void likeFeature(ViewHolder holder) {
+    private void checkLike(String postID, String current_user, ViewHolder holder, String commentID) {
+        firebaseFirestore.collection("Posts").document(postID).collection("Comments")
+                .document(commentID).collection("Likes").document(current_user).get().addOnCompleteListener(task -> {
+            if (Objects.requireNonNull(task.getResult()).exists()) {
+                postLike = true;
+                holder.likeBtn.setImageResource(R.drawable.like_selected);
+                holder.likeBtn.setImageTintList(context.getResources().getColorStateList(R.color.like_pink));
+                Log.e(TAG, "checkLike: comment is already liked by user " + commentID);
+                Log.e(TAG, "checkLike: commentLike " + postLike + " comment id " + commentID);
+            } else {
+                postLike = false;
+                Log.e(TAG, "checkLike: commentLike in else " + postLike + " comment id " + commentID);
+            }
+        });
+    }
+
+    private void likeFeature(ViewHolder holder, String postID, String current_user, String commentID) {
         //check if already liked
+        firebaseFirestore.collection("Posts").document(postID).collection("Comments").document(commentID)
+                .collection("Likes").document(current_user).get().addOnCompleteListener(task -> {
+            if (Objects.requireNonNull(task.getResult()).exists()) {
+                postLike = true;
+                holder.likeBtn.setImageResource(R.drawable.like_selected);
+                holder.likeBtn.setImageTintList(context.getResources().getColorStateList(R.color.like_pink));
+                Log.e(TAG, "checkLike: comment is already liked by user " + commentID);
+                Log.e(TAG, "checkLike: commentLike " + postLike + " comment id " + commentID);
+                dislike(current_user, postID, holder, commentID);
+            } else {
+                postLike = false;
+                Log.e(TAG, "checkLike: commentLike in else " + postLike + " comment id " + commentID);
+                like(current_user, postID, holder, commentID);
+            }
+        });
+    }
+
+    private void like(String current_user, String postID, ViewHolder holder, String commentID) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("time_stamp", FieldValue.serverTimestamp());
+        map.put("uid", current_user);
+        try {
+            firebaseFirestore.collection("Posts").document(postID).collection("Comments").document(commentID)
+                    .collection("Likes").document(current_user).set(map).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    holder.likeBtn.setImageResource(R.drawable.like_selected);
+                    holder.likeBtn.setImageTintList(context.getResources().getColorStateList(R.color.like_pink));
+                    Log.e(TAG, "onComplete: like by" + current_user);
+                    postLike = true;
+                } else {
+                    Log.e(TAG, "onComplete: like failed");
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void dislike(String current_user, String postID, ViewHolder holder, String commentID) {
+        firebaseFirestore.collection("Posts").document(postID).collection("Comments")
+                .document(commentID).collection("Likes").document(current_user).delete().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.e(TAG, "dislike: like deleted ");
+                holder.likeBtn.setImageResource(R.drawable.like_unselected);
+                holder.likeBtn.setImageTintList(context.getResources().getColorStateList(R.color.black));
+
+                postLike = false;
+            }
+        });
     }
 
     private void deleteComment(String commentID, String postID, ViewHolder holder) {
@@ -98,7 +170,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
                 notifyDataSetChanged();
             } else {
                 holder.deleteBtn.setEnabled(true);
-                Log.e(TAG, "deleteComment: error " + task.getException().getMessage());
+                Log.e(TAG, "deleteComment: error " + Objects.requireNonNull(task.getException()).getMessage());
                 notifyDataSetChanged();
             }
             notifyDataSetChanged();
@@ -114,7 +186,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
 
     private void getUserDataAndShowComment(String text, String uid, Date date, ViewHolder holder) {
         firebaseFirestore.collection("Users").document(uid).get().addOnCompleteListener(task -> {
-            if (task.getResult().exists()) {
+            if (Objects.requireNonNull(task.getResult()).exists()) {
                 Log.e(TAG, "getUserDataAndShowComment: user data exists ");
                 final String name = task.getResult().getString("name");
                 final String url = task.getResult().getString("profileURL");
@@ -132,7 +204,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
                     Log.e(TAG, "onBindViewHolder: date exception " + e.getMessage());
                 }
             } else {
-                Log.e(TAG, "getUserDataAndShowComment: error in getting user data " + task.getException().getMessage());
+                Log.e(TAG, "getUserDataAndShowComment: error in getting user data " + Objects.requireNonNull(task.getException()).getMessage());
             }
         });
     }
