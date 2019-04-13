@@ -80,6 +80,9 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         //check postLike
         checkLike(postID, current_user, holder);
 
+        //like count
+        likeCount(postID, holder);
+
         if (postList.get(position).getUrl() != null) {
             Log.e(TAG, "onBindViewHolder: url " + position);
             holder.setPostImageView(url);
@@ -117,6 +120,31 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
 
         //opening a post
         holder.postCard.setOnClickListener(v -> openPost(postID));
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void likeCount(String postID, ViewHolder holder) {
+        //count no of likes
+        firebaseFirestore.collection("Posts").document(postID).collection("Likes").addSnapshotListener((queryDocumentSnapshots, e) -> {
+            try {
+                if (!Objects.requireNonNull(queryDocumentSnapshots).isEmpty()) {
+                    int count = queryDocumentSnapshots.size();
+                    count = count - 1;
+                    if (count > 0) {
+                        holder.likeCountTV.setText("+" + count);
+                    } else {
+                        holder.likeCountTV.setText("");
+                        Log.e(TAG, "likeCount: only 1 like by current user " + postID);
+                    }
+                } else {
+                    holder.likeCountTV.setText("");
+                    Log.e(TAG, "onEvent: no likes");
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                Log.e(TAG, "likeCount: exception getting like " + e1.getMessage());
+            }
+        });
     }
 
     private void postMenu(String postID, String current_user, String postUserId, ViewHolder holder) {
@@ -195,7 +223,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             });
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e(TAG, "deletePost: exception "+e.getMessage() );
+            Log.e(TAG, "deletePost: exception " + e.getMessage());
         }
     }
 
@@ -363,6 +391,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         private ImageView postMenu;
         private CardView postCard;
         private TextView longPost;
+        private TextView likeCountTV;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -376,6 +405,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             postMenu = mView.findViewById(R.id.homerow_menu);
             postCard = mView.findViewById(R.id.homerow_postCard);
             longPost = mView.findViewById(R.id.homerow_longTV);
+            likeCountTV = mView.findViewById(R.id.homerow_likeCount);
         }
 
         void setPostImageView(String mUrl) {

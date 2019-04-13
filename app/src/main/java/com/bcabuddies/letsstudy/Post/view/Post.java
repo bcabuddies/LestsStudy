@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -61,6 +62,8 @@ public class Post extends AppCompatActivity implements PostView {
     ImageView homerowCommentBtn;
     @BindView(R.id.homerow_likeButton)
     ImageView homerowLikeButton;
+    @BindView(R.id.homerow_likeCount)
+    TextView homerowLikeCount;
     private PostPresenterImpl presenter;
     private ArrayList<CommentData> commentList;
     private String postID;
@@ -96,10 +99,10 @@ public class Post extends AppCompatActivity implements PostView {
         commentList = new ArrayList<>();
 
         commentPostBtn.setOnClickListener(v -> {
-            String comment = commentLayout.getEditText().getText().toString();
+            String comment = Objects.requireNonNull(commentLayout.getEditText()).getText().toString();
             String user;
             FirebaseAuth auth = FirebaseAuth.getInstance();
-            user = auth.getCurrentUser().getUid();
+            user = Objects.requireNonNull(auth.getCurrentUser()).getUid();
             if (!comment.isEmpty()) {
                 presenter.postComment(comment, user, postID);
                 commentEditText.setText(null);
@@ -149,6 +152,17 @@ public class Post extends AppCompatActivity implements PostView {
     public void setLike() {
         homerowLikeButton.setImageResource(R.drawable.like_selected);
         homerowLikeButton.setImageTintList(getResources().getColorStateList(R.color.like_pink));
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void setLikeCount(int count) {
+        if (count > 0) {
+            homerowLikeCount.setText("+" + count);
+        } else {
+            homerowLikeCount.setText("");
+            Log.e(TAG, "likeCount: only 1 like by current user " + postID);
+        }
     }
 
     @Override

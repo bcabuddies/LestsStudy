@@ -43,4 +43,5 @@
     <string name="image_desc">image desc</string>
     <string name="hello_sample_date">Hello Sample Date</string>
     <string name="hello_sample_description">Hello Sample Description</string>
+    <string name="likes">Likes</string>
 </resources>

@@ -1,12 +1,12 @@
 package com.bcabuddies.letsstudy.Post.Presenter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.bcabuddies.letsstudy.Model.CommentData;
 import com.bcabuddies.letsstudy.Post.view.PostView;
-import com.bcabuddies.letsstudy.R;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FieldValue;
@@ -78,7 +78,38 @@ public class PostPresenterImpl implements PostPresenter {
             }
         });
 
+        //get like
         getLikes();
+
+        //get like count
+        likeCount(postID);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void likeCount(String postID) {
+        //count no of likes
+        firebaseFirestore.collection("Posts").document(postID).collection("Likes").addSnapshotListener((queryDocumentSnapshots, e) -> {
+            try {
+                if (!Objects.requireNonNull(queryDocumentSnapshots).isEmpty()) {
+                    int count = queryDocumentSnapshots.size();
+                    count = count - 1;
+                    if (count > 0) {
+                        postView.setLikeCount(count);
+                    } else {
+                        count = 0;
+                        postView.setLikeCount(count);
+                        Log.e(TAG, "likeCount: only 1 like by current user");
+                    }
+                } else {
+                    int count = 0;
+                    postView.setLikeCount(count);
+                    Log.e(TAG, "onEvent: no likes");
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                Log.e(TAG, "likeCount: exception getting like " + e1.getMessage());
+            }
+        });
     }
 
     private void getLikes() {
