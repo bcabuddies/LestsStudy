@@ -193,9 +193,11 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         popupMenu.setOnMenuItemClickListener(item -> {
 
             String title = item.getTitle().toString();
+            Log.e(TAG, "postMenu: title " + title);
 
             switch (title) {
-                case "dislike":
+                case "Dislike":
+                    Log.e(TAG, "postMenu: item dislike " + title);
                     negativeLike(postID, current_user);
                     break;
                 case "Report":
@@ -203,10 +205,12 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
                     break;
                 case "Delete":
                     deletePost(postID, postUserId);
-                    break;
+                    return true;
+                default:
+                    return false;
             }
 
-            return true;
+            return false;
         });
 
         popupMenu.show();
@@ -259,11 +263,22 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
 
     private void negativeLike(String postID, String current_user) {
         //give negative points to the post
+        Log.e(TAG, "negativeLike: dislike menu clicked ");
+        HashMap<String, String> data = new HashMap<>();
+
+        data.put("uid", current_user);
+
         firebaseFirestore.collection("Posts").document(postID).collection("Dislike").document(current_user).get().addOnCompleteListener(task -> {
             if (Objects.requireNonNull(task.getResult()).exists()) {
-                Log.e(TAG, "negativeLike: disliked ");
+                Log.e(TAG, "negativeLike: already disliked ");
+                Toast.makeText(context, "Already disliked", Toast.LENGTH_SHORT).show();
             } else {
-                Log.e(TAG, "negativeLike: error in disliking");
+                firebaseFirestore.collection("Posts").document(postID).collection("Dislike").document(current_user).set(data).addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful())
+                        Log.e(TAG, "negativeLike: disliked ");
+                    else
+                        Log.e(TAG, "negativeLike: error " + Objects.requireNonNull(task1.getException()).getMessage());
+                });
             }
         });
     }
@@ -380,7 +395,6 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             e.printStackTrace();
         }
     }
-
 
     private void setAnimation(View itemView, int position) {
         // If the bound view wasn't previously displayed on screen, it's animated

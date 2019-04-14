@@ -203,6 +203,5 @@ public class Feed_home extends Fragment implements Feed_homeView {
 
     public static Fragment newInstance() {
         return new Feed_home();
-
     }
 }
